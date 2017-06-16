@@ -1,0 +1,17 @@
+{
+  "name": "distributed-test-worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ddp": "^0.12.1",
+    "ddp-login": "^1.0.10",
+    "meteor-job": "^1.5.1",
+    "underscore": "^1.8.3"
+  }
+}
