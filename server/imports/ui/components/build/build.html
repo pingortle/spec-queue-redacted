@@ -1,0 +1,33 @@
+<template name="build">
+  <dl>
+    <dt>Id:</dt>
+    <dd>
+      {{ resource._id }}
+    </dd>
+    <dt>
+      JobId:
+    </dt>
+    <dd>
+      {{ resource.startJobId }}
+    </dd>
+    <dt>
+      JobIds:
+    </dt>
+    <dd>
+      {{ jobIds }}
+    </dd>
+    <dt>
+      archiveUrl:
+    </dt>
+    <dd>
+      {{ resource.archiveUrl }}
+    </dd>
+  </dl>
+
+  <h1>Examples</h1>
+  {{#each prettyExamples}}
+    <pre>
+      {{ . }}
+    </pre>
+  {{/each}}
+</template>
