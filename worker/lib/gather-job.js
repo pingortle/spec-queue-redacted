@@ -3,7 +3,7 @@ const createGatherJobWorker = function ({ spawn, spawnSync, throwIf, _, ddp }) {
   const gatherJob = function (job, callback) {
     const maxBuffer = 20000*1024
     const env = _.extend(process.env, { NO_COVERAGE: 'true' })
-    const options = { cwd: '/Users/kaleblape/Dev/***REMOVED***/***REMOVED***-web', maxBuffer, env }
+    const options = { maxBuffer, env }
     const runData = spawnSync('bin/rspec', ['spec/etl', '-fj', '--dry-run'], options)
 
     console.log(`********************spawned stdout: \n\n\n${runData.stdout}`)

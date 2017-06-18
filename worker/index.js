@@ -13,8 +13,8 @@ const createTestJobWorker = require('./lib/test-job.js')
 const createGatherJobWorker = require('./lib/gather-job.js')
 
 const ddp = new DDP({
-  host: "127.0.0.1",
-  port: 3000,
+  host: process.env.METEOR_HOST || "127.0.0.1",
+  port: process.env.METEOR_PORT || 3000,
   use_ejson: true
 })
 

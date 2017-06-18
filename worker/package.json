@@ -1,10 +1,17 @@
 {
-  "name": "distributed-test-worker",
+  "name": "spec-queue-worker",
+  "bin": "index.js",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pkg ."
+  },
+  "pkg": {
+    "targets": [
+      "node7-linux-x64"
+    ]
   },
   "author": "",
   "license": "ISC",
@@ -13,5 +20,8 @@
     "ddp-login": "^1.0.10",
     "meteor-job": "^1.5.1",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "pkg": "^4.1.0"
   }
 }

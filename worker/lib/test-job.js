@@ -8,7 +8,6 @@ const createTestJobWorker = function ({ spawnSync, throwIf, _, ddp }) {
 
     const env = _.extend(process.env, { TEST_ENV_NUMBER: `${process.argv[2]}`, NO_COVERAGE: 'true' })
     const options = {
-      cwd: '/Users/kaleblape/Dev/***REMOVED***/***REMOVED***-web',
       shell: true,
       env
     }
