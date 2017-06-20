@@ -15,21 +15,35 @@ const createGatherJobWorker = require('./lib/gather-job.js')
 const ddp = new DDP({
   host: process.env.METEOR_HOST || "127.0.0.1",
   port: process.env.METEOR_PORT || 3000,
-  use_ejson: true
+  autoReconnect : true,
+  useSockJs: true,
 })
 
 Job.setDDP(ddp)
 
-ddp.connect(function (error) {
-  throwIf(error)
+ddp.connect(function (error, isReconnecting) {
+  handleDDPResponse(error, isReconnecting ? 'reconnecting...' : null)
+  if (error || isReconnecting) return;
 
-  const testJob = createTestJobWorker({ spawnSync, throwIf, _, ddp })
-  const gatherJob = createGatherJobWorker({ spawn, spawnSync, throwIf, _, ddp })
+  const testJob = createTestJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp })
+  const gatherJob = createGatherJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp })
 
-  const testWorkers = Job.processJobs('default', 'test', { concurrency: 1 }, testJob)
-  const gatherWorkers = Job.processJobs('default', 'start', { concurrency: 1 }, gatherJob)
+  const workerOptions = {
+    concurrency: 1,
+    prefetch: 0,
+  }
+
+  const testWorkers = Job.processJobs('default', 'test', workerOptions, testJob)
+  const gatherWorkers = Job.processJobs('default', 'start', workerOptions, gatherJob)
+
+  console.log('Ready to process jobs...')
 })
 
-function throwIf(thing) {
-  if (thing) throw thing
+function handleError(error) {
+  if (error) console.log(`******** Error: ${JSON.stringify(error)}`)
+}
+
+function handleDDPResponse(error, result) {
+  if (error) console.error('******** Error:', error)
+  if (result) console.log(`******** Result: ${JSON.stringify(result)}`)
 }

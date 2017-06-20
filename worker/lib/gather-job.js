@@ -1,13 +1,12 @@
-const createGatherJobWorker = function ({ spawn, spawnSync, throwIf, _, ddp }) {
-
+const createGatherJobWorker = function ({ spawn, spawnSync, handleError, _, ddp }) {
   const gatherJob = function (job, callback) {
     const maxBuffer = 20000*1024
     const env = _.extend(process.env, { NO_COVERAGE: 'true' })
-    const options = { maxBuffer, env }
-    const runData = spawnSync('bin/rspec', ['spec/etl', '-fj', '--dry-run'], options)
+    const options = { maxBuffer, env, encoding: 'utf8' }
+    const runData = spawnSync('bin/rspec', ['spec/etl/transforms/default_value_transform_spec.rb', 'spec/etl/transforms/key_map_transform_spec.rb', '-fj', '--dry-run'], options)
 
-    console.log(`********************spawned stdout: \n\n\n${runData.stdout}`)
-    console.log(`********************spawned stderr: \n\n\n${runData.stderr}`)
+    console.log('******************** spawned stdout:', runData.stdout)
+    console.log('******************** spawned stderr:', runData.stderr)
 
     const results = JSON.parse(runData.stdout)
     const files = results.examples.map(result => result.file_path)
@@ -16,12 +15,11 @@ const createGatherJobWorker = function ({ spawn, spawnSync, throwIf, _, ddp }) {
 
     job.log(`number of spec files: ${specFiles.length}`)
 
-    const ddpCallback = ((error, result) => throwIf(error) || console.log(`ddp result: ${result}`))
     specFiles.forEach((path) => {
-      ddp.call('builds.addTestFile', [{ path, buildId: job.data.buildId }], ddpCallback)
+      ddp.call('builds.addTestFile', [{ path, buildId: job.data.buildId }], handleError)
     })
 
-    job.done('complete', error => throwIf(error))
+    job.done('complete', handleError)
     callback()
   }
 

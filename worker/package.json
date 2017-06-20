@@ -6,11 +6,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pkg ."
+    "build": "./build.sh"
   },
   "pkg": {
     "targets": [
-      "node7-linux-x64"
+      "node7-linux-x64",
+      "node7-mac-x64"
     ]
   },
   "author": "",
