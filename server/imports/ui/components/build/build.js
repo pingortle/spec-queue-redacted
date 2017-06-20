@@ -2,7 +2,8 @@ import './build.html'
 
 Template.build.viewmodel({
   examples() {
-      return this.resource().examples || []
+    const resource = this.resource() || {}
+      return resource.examples || []
   },
   prettyExamples() {
     return this.examples().map((example) => '\n' + JSON.stringify(example, null, '  '))
