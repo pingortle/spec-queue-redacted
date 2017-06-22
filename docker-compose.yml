@@ -10,7 +10,8 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
-    command: s3 cp s3://cas-spec-queue-secrets ./.deploy --recursive
+      S3_SECRETS_BUCKET: ${S3_SECRETS_BUCKET}
+    command: s3 cp s3://$S3_SECRETS_BUCKET ./.deploy --recursive
 
   deploy-server:
     build:
@@ -49,4 +50,5 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
-    command: s3 cp dist s3://cas-spec-queue-bin --recursive
+      S3_WORKER_BIN_BUCKET: ${S3_WORKER_BIN_BUCKET}
+    command: s3 cp dist s3://$S3_WORKER_BIN_BUCKET --recursive
