@@ -3,7 +3,8 @@ const createGatherJobWorker = function ({ spawn, spawnSync, handleError, _, ddp 
     const maxBuffer = 20000*1024
     const env = _.extend(process.env, { NO_COVERAGE: 'true' })
     const options = { maxBuffer, env, encoding: 'utf8' }
-    const runData = spawnSync('bin/rspec', ['spec/etl/transforms/default_value_transform_spec.rb', 'spec/etl/transforms/key_map_transform_spec.rb', '-fj', '--dry-run'], options)
+    const specOptions = job.data.specOptions || ['spec']
+    const runData = spawnSync('bin/rspec', specOptions.concat(['-fj', '--dry-run']), options)
 
     console.log('******************** spawned stdout:', runData.stdout)
     console.log('******************** spawned stderr:', runData.stderr)
