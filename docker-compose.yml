@@ -1,0 +1,27 @@
+version: "2.1"
+
+services:
+  get-server-secrets:
+    image: abesiyo/s3
+    volumes:
+      - ./server/.deploy:/workspace
+    working_dir: /workspace
+    command: s3 get s3://cas-spec-queue-secrets
+
+  deploy-server:
+    build:
+      context: ./server
+      dockerfile: meteor-command.Dockerfile
+    volumes:
+      - ./server/.deploy:/workspace
+    working_dir: /workspace
+    command: bash -c "mup setup && mup deploy"
+
+  test-server:
+    build:
+      context: ./server
+      dockerfile: meteor-command.Dockerfile
+    volumes:
+      - ./server:/workspace
+    working_dir: /workspace
+    command: meteor test --once --driver-package dispatch:mocha
