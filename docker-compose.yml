@@ -2,7 +2,7 @@ version: "2.1"
 
 services:
   get-server-secrets:
-    image: abesiyo/s3
+    image: cgswong/aws:aws
     volumes:
       - ./server:/workspace
     working_dir: /workspace
@@ -10,7 +10,7 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
-    command: cp s3://cas-spec-queue-secrets ./.deploy --recursive
+    command: s3 cp s3://cas-spec-queue-secrets ./.deploy --recursive
 
   deploy-server:
     build:
@@ -41,7 +41,7 @@ services:
     command: pkg --out-path dist .
 
   deploy-worker:
-    image: abesiyo/s3
+    image: cgswong/aws:aws
     volumes:
       - ./worker:/workspace
     working_dir: /workspace
@@ -49,4 +49,4 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
-    command: cp dist s3://cas-spec-queue-bin --recursive
+    command: s3 cp dist s3://cas-spec-queue-bin --recursive
