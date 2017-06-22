@@ -7,9 +7,9 @@ Template.builds.viewmodel({
   builds: () => Builds.find({}),
   submit: function (event) {
     event.preventDefault()
-    const archiveUrl = this.archiveUrl()
-    console.log(archiveUrl)
-    Meteor.call('builds.createJob', { archiveUrl })
+    const specOptions = this.specOptions()
+    console.log(specOptions)
+    Meteor.call('builds.createJob', { specOptions })
   },
   autorun: function () {
     Meteor.subscribe('builds.all')

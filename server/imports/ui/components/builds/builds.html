@@ -1,13 +1,13 @@
 <template name="builds">
   <form>
-    <input type="url" name="archiveUrl" placeholder="Archive Url" {{b "value: archiveUrl" }} required>
+    <input name="specOptions" placeholder="spec" {{b "value: specOptions" }} required>
     <input type="submit" name="submit" value="Add new build" {{b "click: submit"}}>
   </form>
   <ol>
     {{#each builds}}
       <li>
         <a href="builds/{{_id}}">
-          {{ createdAt }} - <pre>Build: {{ _id }}</pre> - <pre>Job: {{ jobId }}</pre> - {{ archiveUrl }}
+          {{ createdAt }} - <pre>Build: {{ _id }}</pre> - <pre>Job: {{ jobId }}</pre> - {{ specOptions }}
         </a>
       </li>
     {{/each}}

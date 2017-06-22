@@ -12,7 +12,7 @@ if (Meteor.isServer) {
     it('can create a new build', function () {
       const insertBuild = Meteor.server.method_handlers['builds.createJob']
 
-      insertBuild.apply({}, [{ archiveUrl: 'https://www.meteor.com' }])
+      insertBuild.apply({}, [{ specOptions: 'spec/models' }])
 
       assert.equal(Builds.find().count(), 1)
     })
