@@ -4,9 +4,9 @@ services:
   get-server-secrets:
     image: abesiyo/s3
     volumes:
-      - ./server/.deploy:/workspace
+      - ./server:/workspace
     working_dir: /workspace
-    command: s3 get s3://cas-spec-queue-secrets
+    command: cp s3://cas-spec-queue-secrets ./.deploy --recursive
 
   deploy-server:
     build:
