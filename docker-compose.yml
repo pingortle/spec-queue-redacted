@@ -6,6 +6,10 @@ services:
     volumes:
       - ./server:/workspace
     working_dir: /workspace
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
     command: cp s3://cas-spec-queue-secrets ./.deploy --recursive
 
   deploy-server:
