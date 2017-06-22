@@ -29,3 +29,24 @@ services:
       - ./server:/workspace
     working_dir: /workspace
     command: /bin/bash -c "meteor npm install && meteor test --once --driver-package dispatch:mocha"
+
+  build-worker:
+    build:
+      context: ./server
+      dockerfile: meteor-command.Dockerfile
+    volumes:
+      - ./worker:/workspace
+      - ./.pkg-cache:/root/.pkg-cache
+    working_dir: /workspace
+    command: pkg --out-path dist .
+
+  deploy-worker:
+    image: abesiyo/s3
+    volumes:
+      - ./worker:/workspace
+    working_dir: /workspace
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+    command: cp dist s3://cas-spec-queue-bin --recursive

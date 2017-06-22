@@ -5,7 +5,7 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends bsdtar locales
 RUN export tar='bsdtar'
 
-RUN npm install -g mup
+RUN npm install -g mup pkg
 
 RUN locale-gen en_US.UTF-8
 RUN localedef -i en_GB -f UTF-8 en_US.UTF-8

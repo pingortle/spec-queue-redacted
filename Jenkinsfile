@@ -14,3 +14,15 @@ node('Kas') {
   sh 'docker-compose run --rm deploy-server'
   }
 }
+
+stage('Test Worker') {
+  // TODO
+}
+
+stage('Build Worker') {
+  sh 'docker-compose run --rm build-worker'
+}
+
+stage('Deploy Worker') {
+  sh 'docker-compose run --rm deploy-worker'
+}
