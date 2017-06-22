@@ -24,4 +24,4 @@ services:
     volumes:
       - ./server:/workspace
     working_dir: /workspace
-    command: meteor test --once --driver-package dispatch:mocha
+    command: /bin/bash -c "meteor npm install && meteor test --once --driver-package dispatch:mocha"
