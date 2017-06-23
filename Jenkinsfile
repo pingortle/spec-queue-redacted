@@ -13,6 +13,10 @@ node('Kas') {
   sh 'docker-compose run -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=$AWS_REGION --rm get-server-secrets'
   sh 'docker-compose run --rm deploy-server'
   }
+}
+
+node('Kas') {
+  checkout scm
 
   stage('Test Worker') {
     // TODO
