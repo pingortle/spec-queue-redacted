@@ -16,6 +16,16 @@ const createGatherJobWorker = function ({ spawn, spawnSync, handleError, _, ddp 
 
     job.log(`number of spec files: ${specFiles.length}`)
 
+    const criteria = {
+      Collections: {
+        Examples: {
+          count: Number(results.summary.example_count, 10)
+        }
+      }
+    }
+
+    ddp.call('builds.begin', [{ buildId: job.data.buildId, criteria, metadata: results }, handleError])
+
     specFiles.forEach((path) => {
       ddp.call('builds.addTestFile', [{ path, buildId: job.data.buildId }], handleError)
     })

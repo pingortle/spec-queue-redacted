@@ -51,5 +51,63 @@ Meteor.methods({
     check(examples, [Object])
 
     return examples.map(example => Examples.insert({ buildId, ...example }))
+  },
+  'builds.begin'({ buildId, criteria, metadata }) {
+    check(buildId, String)
+    check(criteria, Object)
+    check(metadata, Object)
+
+    return Builds.update(buildId, { $set: { criteria, metadata } })
+  },
+  'builds.isComplete'({ buildId }) {
+    check(buildId, String)
+    const build = Builds.findOne(buildId)
+
+    return _.chain(build.criteria).map((value, key) => {
+      return evaluateCriterion(build, key, value)
+    })
+    .flatten()
+    .every()
+    .value()
   }
 })
+
+const criteriaCollections = {
+  Examples: Examples
+}
+
+const collectionCriteriaActions = {
+  count(collection, build) {
+    return collection.find({ buildId: build._id }).count()
+  }
+}
+
+function evaluateCriterion(build, key, value) {
+  if (key === 'Collections') return evaluateCollectionsCriteria(build, value)
+  return build[key] === value
+}
+
+function evaluateCollectionsCriteria(build, criteria) {
+  return _.chain(criteria).map((value, key) => {
+    return evaluateCollectionsCriterion(build, key, value)
+  })
+  .every()
+  .value()
+}
+
+function evaluateCollectionsCriterion(build, collectionName, criteria) {
+  if (!criteriaCollections[collectionName]) return false
+
+  return _.chain(criteria).map((value, key) => {
+    const collection = criteriaCollections[collectionName]
+    return evaluateCollectionCriteriaAction(build, collection, key, value)
+  })
+  .every()
+  .value()
+}
+
+function evaluateCollectionCriteriaAction(build, collection, action, value) {
+  if (!collectionCriteriaActions[action]) return false
+
+  return collectionCriteriaActions[action](collection, build) === value
+}

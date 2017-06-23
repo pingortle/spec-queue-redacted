@@ -74,5 +74,63 @@ if (Meteor.isServer) {
         })
       })
     })
+
+    describe('builds.begin', function () {
+      const subject = Meteor.server.method_handlers['builds.begin']
+
+      it('adds initial information to the build', function () {
+        const buildId = Builds.insert({ name: 'Joe' })
+
+        const criteria = {
+          Collections: {
+            Examples: {
+              count: 10
+            }
+          }
+        }
+
+        const metadata = {
+          tags: ['cool', 'challenging']
+        }
+
+        subject.apply({}, [{ buildId, criteria, metadata }])
+        const build = Builds.findOne(buildId)
+        expect(build).to.have.deep.property('criteria', criteria)
+        expect(build).to.have.deep.property('metadata', metadata)
+      })
+    })
+
+    describe('builds.isComplete', function () {
+      const subject = Meteor.server.method_handlers['builds.isComplete']
+
+      it('calculates the completeness based on specified simple criteria', function () {
+        const criteria = {
+          Collections: {
+            Examples: {
+              count: 1
+            }
+          }
+        }
+
+        const buildId = Builds.insert({ criteria })
+
+        expect(subject.apply({}, [{ buildId }])).to.be.false
+        Examples.insert({ buildId })
+        Examples.insert({ buildId: 'bogus' })
+        expect(subject.apply({}, [{ buildId }])).to.be.true
+      })
+
+      it('calculates the completeness based on specified collection criteria', function () {
+        const criteria = {
+          name: 'Frank'
+        }
+
+        const buildId = Builds.insert({ name: 'Joe', criteria })
+
+        expect(subject.apply({}, [{ buildId }])).to.be.false
+        Builds.update(buildId, { $set: { name: 'Frank' } })
+        expect(subject.apply({}, [{ buildId }])).to.be.true
+      })
+    })
   })
 }

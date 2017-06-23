@@ -15,4 +15,7 @@ Template.build.viewmodel({
   prettyJobIds() {
     return this.jobIds().join(', ')
   },
+  autorun() {
+    Meteor.call('builds.isComplete', { this.resource()._id }, (error, result) => console.log('Error?:', error, `complete?: ${result}`))
+  }
 })
