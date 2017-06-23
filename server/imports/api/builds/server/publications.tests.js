@@ -1,4 +1,4 @@
-import { assert } from 'meteor/practicalmeteor:chai'
+import { assert, expect } from 'chai'
 import { Builds } from '../builds.js'
 import { PublicationCollector } from 'meteor/johanbrook:publication-collector'
 import './publications.js'
@@ -8,6 +8,7 @@ describe('builds publications', function () {
     Builds.remove({})
     Builds.insert({
       archiveUrl: 'https://www.meteor.com',
+      examples: [{ example: 1 }]
     })
   })
 
@@ -16,6 +17,14 @@ describe('builds publications', function () {
       const collector = new PublicationCollector()
       collector.collect('builds.all', (collections) => {
         assert.equal(collections.builds.length, 1)
+        done()
+      })
+    })
+
+    it('excludes examples', function (done) {
+      const collector = new PublicationCollector()
+      collector.collect('builds.all', (collections) => {
+        expect(collections.builds[0]).to.not.have.property('examples')
         done()
       })
     })

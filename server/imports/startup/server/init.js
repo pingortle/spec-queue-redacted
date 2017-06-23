@@ -3,4 +3,5 @@ import { DefaultJobQueue } from '../../api/jobs/jobs.js'
 
 Meteor.startup(() => {
   DefaultJobQueue.startJobServer()
+  DefaultJobQueue.setLogStream(process.stdout)
 })

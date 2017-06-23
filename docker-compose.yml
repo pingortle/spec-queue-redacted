@@ -39,7 +39,7 @@ services:
       - ./worker:/workspace
       - ./.pkg-cache:/root/.pkg-cache
     working_dir: /workspace
-    command: pkg --out-path dist .
+    command: /bin/sh -c "npm install && pkg --out-path dist ."
 
   deploy-worker:
     image: cgswong/aws:aws

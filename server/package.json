@@ -3,10 +3,16 @@
   "private": true,
   "scripts": {
     "start": "meteor run",
-    "test": "meteor test --once --driver-package dispatch:mocha"
+    "test": "meteor test --once --driver-package dispatch:mocha",
+    "watch-tests": "meteor test --driver-package practicalmeteor:mocha"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",
     "meteor-node-stubs": "~0.2.4"
+  },
+  "devDependencies": {
+    "chai": "^4.0.2",
+    "faker": "^4.1.0",
+    "sinon-chai": "^2.11.0"
   }
 }

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor'
 import { check } from 'meteor/check'
 import { Builds } from './builds.js'
 import { DefaultJobQueue } from '../jobs/jobs.js'
+import { Examples } from '../examples/examples.js'
 
 Meteor.methods({
   'builds.createJob'({ specOptions }) {
@@ -24,6 +25,15 @@ Meteor.methods({
 
     return buildId
   },
+  'builds.destroy'({ buildId }) {
+    check(buildId, String)
+
+    const build = Builds.findOne(buildId)
+    DefaultJobQueue.cancelJobs(build.jobIds || [])
+    Examples.remove({ buildId })
+
+    return Builds.remove(buildId)
+  },
   'builds.addTestFile'({ buildId, path }) {
     check(buildId, String)
     check(path, String)
@@ -40,6 +50,6 @@ Meteor.methods({
     check(buildId, String)
     check(examples, [Object])
 
-    return Builds.update(buildId, { $push: { examples: { $each: examples } }, $inc: { examplesCount: examples.length } })
+    return examples.map(example => Examples.insert({ buildId, ...example }))
   }
 })

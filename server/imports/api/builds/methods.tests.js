@@ -1,5 +1,7 @@
 import { Meteor } from 'meteor/meteor'
-import { assert } from 'meteor/practicalmeteor:chai'
+import { assert, expect } from 'chai'
+import { DefaultJobQueue } from '../jobs/jobs.js'
+import { Examples } from '../examples/examples.js'
 import { Builds } from './builds.js'
 import './methods.js'
 
@@ -7,14 +9,70 @@ if (Meteor.isServer) {
   describe('builds methods', function () {
     beforeEach(function () {
       Builds.remove({})
+      Examples.remove({})
     })
 
     it('can create a new build', function () {
       const insertBuild = Meteor.server.method_handlers['builds.createJob']
-
       insertBuild.apply({}, [{ specOptions: 'spec/models' }])
 
       assert.equal(Builds.find().count(), 1)
+    })
+
+    describe('builds.destroy', function () {
+      const method = Meteor.server.method_handlers['builds.destroy']
+      const addTestFile = Meteor.server.method_handlers['builds.addTestFile']
+      const createJob = Meteor.server.method_handlers['builds.createJob']
+
+      let buildId = null
+
+      beforeEach(function () {
+        buildId = createJob.apply({}, [{ specOptions: 'options' }])
+        addTestFile.apply({}, [{ buildId, path: 'path/to/file' }])
+      })
+
+      it('removes the specified build', function () {
+        expect(Builds.findOne(buildId)).to.be.ok
+        method.apply({}, [{ buildId }])
+        expect(Builds.findOne(buildId)).to.be.not.ok
+      })
+
+      it('cancels jobs attached to the build', function () {
+        const build = Builds.findOne(buildId)
+        const beforeStatuses = DefaultJobQueue.find({ _id: { $in: build.jobIds } })
+          .map((job) => job.status )
+        expect(beforeStatuses).to.have.members(['waiting'])
+
+        method.apply({}, [{ buildId }])
+
+        const afterStatuses = DefaultJobQueue.find({ _id: { $in: build.jobIds } })
+          .map((job) => job.status)
+        expect(afterStatuses).to.have.members(['cancelled'])
+      })
+
+      it('removes examples attached to the build', function () {
+        const exampleId = Examples.insert({ buildId })
+
+        expect(Examples.findOne(exampleId)).to.be.ok
+        method.apply({}, [{ buildId }])
+        expect(Examples.findOne(exampleId)).to.not.be.ok
+      })
+    })
+
+    describe('builds.addExamples', function () {
+      const subject = Meteor.server.method_handlers['builds.addExamples']
+      const examples = [{ example: 1 }, { example: 2 }]
+
+      it('creates examples attached to the build', function () {
+        const buildId = Builds.insert({})
+
+        expect(() => subject.apply({}, [{ buildId, examples }])).to
+          .increase(() => Examples.find().count()).by(examples.length)
+
+        Examples.find().fetch().forEach(example => {
+          expect(example).to.have.property('buildId', buildId)
+        })
+      })
     })
   })
 }

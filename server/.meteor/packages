@@ -27,3 +27,6 @@ johanbrook:publication-collector  # Test a Meteor publication by collecting its 
 vsivsi:job-collection
 manuel:viewmodel
 dispatch:mocha
+practicalmeteor:sinon
+hwillson:stub-collections
+dburles:factory

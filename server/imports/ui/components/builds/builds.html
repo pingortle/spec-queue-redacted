@@ -5,7 +5,8 @@
   </form>
   <ol>
     {{#each builds}}
-      <li>
+      <li data-id="{{_id}}">
+        <button {{b "click: destroy(this)"}}>Destroy</button>
         <a href="builds/{{_id}}">
           {{ createdAt }} - <pre>Build: {{ _id }}</pre> - <pre>Job: {{ jobId }}</pre> - {{ specOptions }}
         </a>

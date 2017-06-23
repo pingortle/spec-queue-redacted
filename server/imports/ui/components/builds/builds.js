@@ -11,6 +11,11 @@ Template.builds.viewmodel({
     console.log(specOptions)
     Meteor.call('builds.createJob', { specOptions })
   },
+  destroy: function (subject) {
+    Meteor.call('builds.destroy', { buildId: subject._id }, (error) => {
+      if (error) console.error(error)
+    })
+  },
   autorun: function () {
     Meteor.subscribe('builds.all')
   }
