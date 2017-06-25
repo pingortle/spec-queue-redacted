@@ -59,7 +59,7 @@ Meteor.methods({
 
     return Builds.update(buildId, { $set: { criteria, metadata } })
   },
-  'builds.isComplete'({ buildId }) {
+  'builds.satisfied?'({ buildId }) {
     check(buildId, String)
     const build = Builds.findOne(buildId)
 

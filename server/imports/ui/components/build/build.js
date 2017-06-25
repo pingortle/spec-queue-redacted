@@ -16,6 +16,8 @@ Template.build.viewmodel({
     return this.jobIds().join(', ')
   },
   autorun() {
-    Meteor.call('builds.isComplete', { this.resource()._id }, (error, result) => console.log('Error?:', error, `complete?: ${result}`))
+    const parameters = { buildId: this.resource()._id }
+    const log = (error, result) => console.log('Error?:', error, `complete?: ${result}`)
+    Meteor.call('builds.satisfied?', parameters, log)
   }
 })

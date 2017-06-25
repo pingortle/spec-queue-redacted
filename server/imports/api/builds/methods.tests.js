@@ -100,8 +100,8 @@ if (Meteor.isServer) {
       })
     })
 
-    describe('builds.isComplete', function () {
-      const subject = Meteor.server.method_handlers['builds.isComplete']
+    describe('builds.satisfied?', function () {
+      const subject = Meteor.server.method_handlers['builds.satisfied?']
 
       it('calculates the completeness based on specified simple criteria', function () {
         const criteria = {
