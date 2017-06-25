@@ -4,10 +4,12 @@ import './build.html'
 
 Template.build.viewmodel({
   examples() {
-    return Examples.find({ buildId: this.resource()._id })
+    const buildId = this.resource()._id
+    return Examples.find({ buildId })
   },
   prettyExamples() {
-    return this.examples().map((example) => '\n' + JSON.stringify(example, null, '  '))
+    return this.examples()
+      .map((example) => '\n' + JSON.stringify(example, null, '  '))
   },
   jobIds() {
     return this.resource().jobIds || []
