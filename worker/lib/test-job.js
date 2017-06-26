@@ -1,8 +1,11 @@
+const fs = require('fs')
+
 const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp }) {
   const testJob = function (job, callback) {
     console.log(JSON.stringify(job))
 
-    const command = `bin/rspec ${job.data.path} -fj`
+    const resultFilePath = `results-${job._id}.json`
+    const command = `bin/rspec ${job.data.path} -fj --out ${resultFilePath}`
     console.log(`executing "${command}"`)
 
     const env = _.extend(process.env, { NO_COVERAGE: 'true' })
@@ -22,28 +25,39 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
       handleError(error, result)
     }
 
-    testRun.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-      const results = JSON.parse(runData.stdout)
-
-      const buildId = job.data.buildId
-      const examples = results.examples
-
-      ddp.call('builds.addExamples', [{ buildId, examples }], (error, result) => {
-        handleJobError(error, result)
-        if (!error) job.done('complete', handleJobError)
-      })
-    })
-
     testRun.on('close', (code) => {
       console.log(`child process exited with code ${code}`)
-      callback()
+
+      fs.readFile(resultFilePath, 'utf8', (error, data) => {
+        let results = null
+
+        if (error) {
+          job.fail(error)
+        } else {
+          try {
+            results = JSON.parse(data)
+          } catch (error) {
+            job.fail(error)
+          }
+        }
+
+        if (results) {
+          const buildId = job.data.buildId
+          const examples = results.examples
+
+          ddp.call('builds.addExamples', [{ buildId, examples }], (error, result) => {
+            handleJobError(error, result)
+            if (!error) job.done('complete', handleJobError)
+          })
+        }
+
+        callback()
+      })
     })
 
     testRun.on('error', (error) => {
       console.error(error)
-      job.error(error)
-      job.fail()
+      job.fail(error)
     })
   }
 
