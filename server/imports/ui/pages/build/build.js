@@ -10,5 +10,6 @@ Template.App_build.viewmodel({
   autorun() {
     Meteor.subscribe('builds.one', this.params().buildId)
     Meteor.subscribe('examples.forBuild', this.params().buildId)
+    Meteor.subscribe('jobs.default')
   }
 })
