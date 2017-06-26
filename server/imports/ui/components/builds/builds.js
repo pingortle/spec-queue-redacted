@@ -5,11 +5,8 @@ import './builds.less'
 
 Template.builds.viewmodel({
   builds: () => Builds.find({}),
-  submit: function (event) {
-    event.preventDefault()
-    const specOptions = this.specOptions()
-    console.log(specOptions)
-    Meteor.call('builds.createJob', { specOptions })
+  startBuild: function (event) {
+    Meteor.call('builds.createJob')
   },
   destroy: function (subject) {
     Meteor.call('builds.destroy', { buildId: subject._id }, (error) => {

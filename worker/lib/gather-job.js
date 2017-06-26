@@ -5,7 +5,7 @@ const createGatherJobWorker = function ({ spawn, spawnSync, handleError, _, ddp 
     const maxBuffer = 20000*1024
     const env = _.extend(process.env, { NO_COVERAGE: 'true' })
     const options = { maxBuffer, env, encoding: 'utf8' }
-    const specOptions = job.data.specOptions || ['spec']
+    const specOptions = ['spec']
     const runData = spawnSync('bin/rspec', specOptions.concat(['-fj', '--dry-run']), options)
 
     console.log('******************** spawned stdout:', runData.stdout)

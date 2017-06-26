@@ -5,20 +5,15 @@ import { DefaultJobQueue } from '../jobs/jobs.js'
 import { Examples } from '../examples/examples.js'
 
 Meteor.methods({
-  'builds.createJob'({ specOptions }) {
-    check(specOptions, String)
-    specOptions = specOptions.split(' ')
-
+  'builds.createJob'() {
     const doc = {
-      specOptions,
-      examples: [],
       jobIds: [],
       createdAt: new Date(),
     }
 
     const buildId = Builds.insert(doc)
 
-    const job = new Job('default', 'start', { buildId, specOptions })
+    const job = new Job('default', 'start', { buildId })
     const jobId = job.save()
 
     Builds.update(buildId, { $set: { startJobId: jobId } })

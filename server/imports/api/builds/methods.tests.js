@@ -15,7 +15,7 @@ if (Meteor.isServer) {
 
     it('can create a new build', function () {
       const insertBuild = Meteor.server.method_handlers['builds.createJob']
-      insertBuild.apply({}, [{ specOptions: 'spec/models' }])
+      insertBuild.apply({}, [])
 
       assert.equal(Builds.find().count(), 1)
     })
@@ -28,7 +28,7 @@ if (Meteor.isServer) {
       let buildId = null
 
       beforeEach(function () {
-        buildId = createJob.apply({}, [{ specOptions: 'options' }])
+        buildId = createJob.apply({}, [}])
         addTestFile.apply({}, [{ buildId, path: 'path/to/file' }])
       })
 

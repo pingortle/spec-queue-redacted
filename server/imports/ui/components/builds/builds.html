@@ -1,14 +1,12 @@
 <template name="builds">
-  <form class="form-inline">
-    <input class="form-control" name="specOptions" placeholder="spec" {{b "value: specOptions" }} required>
-    <input class="btn btn-default" type="submit" name="submit" value="Add new build" {{b "click: submit"}}>
-  </form>
+  <button class="btn btn-default" {{b "click: startBuild"}}>Start new build</button>
+
   <ol>
     {{#each builds}}
       <li data-id="{{_id}}">
         <button class="btn btn-danger btn-xs" {{b "click: destroy(this)"}}>Destroy</button>
         <a href="builds/{{_id}}">
-          {{ createdAt }} - <code>Build: {{ _id }}</code> - <code>Job: {{ jobId }}</code> - {{ specOptions }}
+          {{ createdAt }} - <code>Build: {{ _id }}</code>
         </a>
       </li>
     {{/each}}

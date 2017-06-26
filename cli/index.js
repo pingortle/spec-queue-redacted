@@ -9,7 +9,7 @@ const ddp = new DDP({
 ddp.connect(function (error) {
   throwIf(error)
 
-  ddp.call('builds.createJob', [{ archiveUrl: 'http://url.to.my/deployment.tar.gz' }], function (error, result) {
+  ddp.call('builds.createJob', [], function (error, result) {
     throwIf(error)
     console.log(result)
     process.exit()
