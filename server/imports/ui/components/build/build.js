@@ -37,5 +37,8 @@ Template.build.viewmodel({
   },
   countOfExamplesWithStatus(status) {
     return this.examples({ status }).count()
+  },
+  autorun() {
+    Meteor.subscribe('jobs.default.in', this.resource().jobIds)
   }
 })

@@ -9,9 +9,7 @@ Template.App_build.viewmodel({
   resource() { return Builds.findOne(this.params().buildId) || { jobIds: [] } },
   autorun() {
     const buildId = this.params().buildId
-    const build = Builds.find(buildId)
     Meteor.subscribe('builds.one', buildId)
     Meteor.subscribe('examples.forBuild', { buildId })
-    Meteor.subscribe('jobs.default.in', build.jobIds)
   },
 })
