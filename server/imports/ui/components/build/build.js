@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor'
 import { Examples } from '/imports/api/examples/examples.js'
 import { DefaultJobQueue } from '/imports/api/jobs/jobs.js'
 import './build.html'
+import './build.less'
 
 Template.build.viewmodel({
   buildId() {

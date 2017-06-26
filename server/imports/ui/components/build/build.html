@@ -1,30 +1,5 @@
 <template name="build">
-  <dl>
-    <dt>Id:</dt>
-    <dd>
-      {{ resource._id }}
-    </dd>
-    <dt>
-      JobId:
-    </dt>
-    <dd>
-      {{ resource.startJobId }}
-    </dd>
-    <dt>
-      JobIds:
-    </dt>
-    <dd>
-      {{ jobIds }}
-    </dd>
-    <dt>
-      options:
-    </dt>
-    <dd>
-      {{ resource.specOptions }}
-    </dd>
-  </dl>
-
-  <h1>Job Stats</h1>
+  <h2>Job Stats</h2>
 
   <dl>
     {{#each status in jobStatuses}}
@@ -37,7 +12,7 @@
     {{/each}}
   </dl>
 
-  <h1>Examples</h1>
+  <h2>Examples</h2>
   <dl>
     {{#each status in exampleStatuses}}
       <dt>
@@ -49,7 +24,7 @@
     {{/each}}
   </dl>
 
-  {{#if (countOfExamplesWithStatus "failed")}}<h2>Failures</h2>{{/if}}
+  {{#if (countOfExamplesWithStatus "failed")}}<h3>Failures</h3>{{/if}}
   {{#each (pp (examplesWithStatus "failed")) }}
     <pre>
       {{ . }}

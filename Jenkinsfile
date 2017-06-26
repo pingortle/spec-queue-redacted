@@ -6,7 +6,7 @@ node('Kas') {
   }
 
   stage('Deploy Infrastructure') {
-    sh 'docker-compose run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION --rm deploy-infrastructure'
+    // sh 'docker-compose run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION --rm deploy-infrastructure'
   }
 
   stage('Test Server') {

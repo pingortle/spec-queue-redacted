@@ -1,3 +1,6 @@
 <template name="App_build">
-  {{> build resource=resource }}
+  <div class="build-container">
+    <h1>Build <small>{{ resource._id }}</small></h1>
+    {{> build resource=resource }}
+  </div>
 </template>
