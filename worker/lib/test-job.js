@@ -4,7 +4,7 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
   const testJob = function (job, callback) {
     console.log(JSON.stringify(job))
 
-    const resultFilePath = `results-${job._id}.json`
+    const resultFilePath = `results-${job.doc._id}.json`
     const command = `bin/rspec ${job.data.path} -fj --out ${resultFilePath}`
     console.log(`executing "${command}"`)
 
