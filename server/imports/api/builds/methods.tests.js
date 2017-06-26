@@ -28,7 +28,7 @@ if (Meteor.isServer) {
       let buildId = null
 
       beforeEach(function () {
-        buildId = createJob.apply({}, [}])
+        buildId = createJob.apply({}, [])
         addTestFile.apply({}, [{ buildId, path: 'path/to/file' }])
       })
 
