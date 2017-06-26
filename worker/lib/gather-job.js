@@ -21,7 +21,7 @@ const createGatherJobWorker = function ({ spawn, spawnSync, handleError, _, ddp 
       }
     }
 
-    ddp.call('builds.begin', [{ buildId: job.data.buildId, criteria, metadata: results }, handleError])
+    ddp.call('builds.begin', [{ buildId: job.data.buildId, criteria, metadata: results }], handleError)
 
     glob.sync('spec/**/*_spec.rb').forEach((path) => {
       ddp.call('builds.addTestFile', [{ path, buildId: job.data.buildId }], handleError)
