@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor'
-import { check } from 'meteor/check'
+import { check, Match } from 'meteor/check'
 import { Builds } from './builds.js'
 import { DefaultJobQueue } from '../jobs/jobs.js'
 import { Examples } from '../examples/examples.js'
@@ -36,15 +36,19 @@ Meteor.methods({
   },
   'builds.addTestFile'({ buildId, path }) {
     check(buildId, String)
-    check(path, String)
+    check(path, Match.OneOf(String, [String]))
+
+    paths = _.flatten([path])
 
     const build = Builds.findOne(buildId)
-    const testJob = new Job('default', 'test', { path, buildId })
+    return paths.map(path => {
+      const testJob = new Job('default', 'test', { path, buildId })
 
-    const dependency = new Job('default', DefaultJobQueue.findOne(build.startJobId))
-    const testJobId = testJob.depends([dependency]).save()
+      const dependency = DefaultJobQueue.getJob(build.startJobId)
+      const testJobId = testJob.depends([dependency]).save()
 
-    return Builds.update(buildId, { $addToSet: { jobIds: testJobId } })
+      return Builds.update(buildId, { $addToSet: { jobIds: testJobId } })
+    })
   },
   'builds.addExamples'({ buildId, examples }) {
     check(buildId, String)
@@ -52,10 +56,13 @@ Meteor.methods({
 
     return examples.map(example => Examples.insert({ buildId, ...example }))
   },
-  'builds.begin'({ buildId, criteria, metadata }) {
+  'builds.begin'({ buildId, criteria, metadata, testFilePaths }) {
     check(buildId, String)
     check(criteria, Object)
     check(metadata, Object)
+    check(testFilePaths, [String])
+
+    Meteor.call('builds.addTestFile', { buildId, path: testFilePaths })
 
     return Builds.update(buildId, { $set: { criteria, metadata } })
   },

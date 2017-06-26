@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor'
+import { Mongo } from 'meteor/mongo'
 import { assert, expect } from 'chai'
 import { DefaultJobQueue } from '../jobs/jobs.js'
 import { Examples } from '../examples/examples.js'
@@ -79,7 +80,8 @@ if (Meteor.isServer) {
       const subject = Meteor.server.method_handlers['builds.begin']
 
       it('adds initial information to the build', function () {
-        const buildId = Builds.insert({ name: 'Joe' })
+        const startJobId = new Job('default', 'start', {}).save()
+        const buildId = Builds.insert({ name: 'Joe', startJobId })
 
         const criteria = {
           Collections: {
@@ -93,7 +95,7 @@ if (Meteor.isServer) {
           tags: ['cool', 'challenging']
         }
 
-        subject.apply({}, [{ buildId, criteria, metadata }])
+        subject.apply({}, [{ buildId, criteria, metadata, testFilePaths: ['file.test'] }])
         const build = Builds.findOne(buildId)
         expect(build).to.have.deep.property('criteria', criteria)
         expect(build).to.have.deep.property('metadata', metadata)
