@@ -29,7 +29,7 @@ Template.build.viewmodel({
   },
   countOfJobsWithStatus(status) {
     return DefaultJobQueue.find({
-      _id: { $in: this.resource().jobIds },
+      _id: { $in: this.jobIds() },
       status
     }).count()
   },
@@ -38,6 +38,9 @@ Template.build.viewmodel({
   },
   countOfExamplesWithStatus(status) {
     return this.examples({ status }).count()
+  },
+  cancel() {
+    Meteor.call('builds.cancel', { buildId: this.buildId() })
   },
   autorun:[
     function () { Meteor.subscribe('jobs.default.in', this.resource().jobIds) },

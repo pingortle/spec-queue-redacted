@@ -1,4 +1,8 @@
 <template name="build">
+  <h1>Build <small>{{ resource.status }}</small></h1>
+
+  <button class="btn btn-danger" {{b "click: cancel"}}>Cancel</button>
+
   <h2>Job Stats</h2>
 
   <dl>

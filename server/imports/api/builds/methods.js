@@ -34,6 +34,14 @@ Meteor.methods({
 
     return Builds.remove(buildId)
   },
+  'builds.cancel'({ buildId }) {
+    check(buildId, String)
+
+    const build = Builds.findOne(buildId)
+    DefaultJobQueue.cancelJobs(build.jobIds || [])
+
+    return Builds.update(buildId, { $set: { status: 'cancelled' } })
+  },
   'builds.addTestFile'({ buildId, path }) {
     check(buildId, String)
     check(path, Match.OneOf(String, [String]))
