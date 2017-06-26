@@ -5,7 +5,7 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
     console.log(JSON.stringify(job))
 
     const resultFilePath = `results-${job.doc._id}.json`
-    const command = `bin/rspec ${job.data.path} -fj --out ${resultFilePath}`
+    const command = `bin/rspec ${job.data.path} -fj --out ${resultFilePath} --format progress`
     console.log(`executing "${command}"`)
 
     const env = _.extend(process.env, { NO_COVERAGE: 'true' })
@@ -25,7 +25,7 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
       handleError(error, result)
     }
 
-    testRun.on('data', data => job.log(data))
+    testRun.on('data', data => job.log(data, { echo: true }))
 
     testRun.on('close', (code) => {
       console.log(`child process exited with code ${code}`)

@@ -31,6 +31,7 @@ ddp.connect(function (error, isReconnecting) {
   const workerOptions = {
     concurrency: 1,
     prefetch: 0,
+    workTimeout: 5 * 60 * 1000,
   }
 
   const testWorkers = Job.processJobs('default', 'test', workerOptions, testJob)
