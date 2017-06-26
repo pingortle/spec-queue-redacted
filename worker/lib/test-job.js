@@ -25,6 +25,8 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
       handleError(error, result)
     }
 
+    testRun.on('data', data => job.log(data))
+
     testRun.on('close', (code) => {
       console.log(`child process exited with code ${code}`)
 
@@ -58,6 +60,7 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
     testRun.on('error', (error) => {
       console.error(error)
       job.fail(error)
+      callback()
     })
   }
 
