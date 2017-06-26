@@ -17,7 +17,6 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
 
     const rootCommand = command.split(' ')[0]
     const args = command.split(' ').slice(1)
-    const runData = spawnSync(command, args, options)
     const testRun = spawn(command, args, options)
 
     const handleJobError = (error, result) => {
@@ -25,7 +24,9 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
       handleError(error, result)
     }
 
-    testRun.on('data', data => job.log(data, { echo: true }))
+    let progress = 0
+    testRun.stdout.on('data', data => job.progress(progress, progress += 1, { echo: true }))
+    testRun.stderr.on('data', data => job.log(data, { echo: true }))
 
     testRun.on('close', (code) => {
       console.log(`child process exited with code ${code}`)
