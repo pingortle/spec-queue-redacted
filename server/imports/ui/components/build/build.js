@@ -38,7 +38,11 @@ Template.build.viewmodel({
   countOfExamplesWithStatus(status) {
     return this.examples({ status }).count()
   },
-  autorun() {
-    Meteor.subscribe('jobs.default.in', this.resource().jobIds)
-  }
+  autorun:[
+    function () { Meteor.subscribe('jobs.default.in', this.resource().jobIds) },
+    function () {
+      const ids = this.examplesWithStatus('failed').map(example => example._id)
+      Meteor.subscribe('examples.withDetails', ids)
+    }
+  ]
 })
