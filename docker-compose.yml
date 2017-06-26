@@ -57,6 +57,7 @@ services:
     image: hashicorp/terraform:0.9.4
     volumes:
       - ./infrastructure:/workspace
+      - $HOME/.ssh:/root/.ssh
     working_dir: /workspace
     environment:
       TF_VAR_aws_access_key: ${AWS_ACCESS_KEY_ID}
