@@ -26,7 +26,7 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
 
     let progress = 0
     testRun.stdout.on('data', data => job.progress(progress, progress += 1, { echo: true }))
-    testRun.stderr.on('data', data => job.log(data, { echo: true }))
+    testRun.stderr.on('data', data => job.log(data.toString(), { echo: true }))
 
     testRun.on('close', (code) => {
       console.log(`child process exited with code ${code}`)
