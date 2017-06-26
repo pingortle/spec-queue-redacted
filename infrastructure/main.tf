@@ -13,10 +13,13 @@ terraform {
 }
 
 module "stack" {
-  source        = "git::ssh://git@lab.***REMOVED***.com/***REMOVED***/terraform.git?ref=v1.0.4"
-  name          = "spec-queue-stack"
-  keypair       = "spec-queue"
-  ecs_instance_type = "m4.large"
+  source                = "git::ssh://git@lab.***REMOVED***.com/***REMOVED***/terraform.git?ref=v1.0.4"
+  name                  = "spec-queue-stack"
+  keypair               = "spec-queue"
+  ecs_instance_type     = "m4.large"
+  ecs_min_size          = 1
+  ecs_max_size          = 1
+  ecs_desired_capacity  = 1
 }
 
 resource "aws_instance" "web" {

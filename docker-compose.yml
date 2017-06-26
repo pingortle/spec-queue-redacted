@@ -52,3 +52,15 @@ services:
       AWS_REGION: ${AWS_REGION}
       S3_WORKER_BIN_BUCKET: ${S3_WORKER_BIN_BUCKET}
     command: s3 cp dist s3://$S3_WORKER_BIN_BUCKET --recursive
+
+  deploy-infrastructure:
+    image: hashicorp/terraform:0.9.4
+    volumes:
+      - ./infrastructure:/workspace
+    working_dir: /workspace
+    environment:
+      TF_VAR_aws_access_key: ${AWS_ACCESS_KEY_ID}
+      TF_VAR_aws_secret_key: ${AWS_SECRET_ACCESS_KEY}
+      TF_VAR_aws_region: ${AWS_REGION}
+    entrypoint: /bin/sh
+    command: -c "terraform init && terraform apply"
