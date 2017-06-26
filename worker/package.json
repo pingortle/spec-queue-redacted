@@ -19,6 +19,7 @@
   "dependencies": {
     "ddp": "^0.12.1",
     "ddp-login": "^1.0.10",
+    "glob": "^7.1.2",
     "meteor-job": "^1.5.1",
     "underscore": "^1.8.3"
   },

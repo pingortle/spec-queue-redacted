@@ -24,8 +24,33 @@
     </dd>
   </dl>
 
+  <h1>Job Stats</h1>
+
+  <dl>
+    {{#each status in jobStatuses}}
+      <dt>
+        {{ status }}:
+      </dt>
+      <dd>
+        {{countOfJobsWithStatus status }}
+      </dd>
+    {{/each}}
+  </dl>
+
   <h1>Examples</h1>
-  {{#each prettyExamples}}
+  <dl>
+    {{#each status in exampleStatuses}}
+      <dt>
+        {{ status }}:
+      </dt>
+      <dd>
+        {{countOfExamplesWithStatus status }}
+      </dd>
+    {{/each}}
+  </dl>
+
+  {{#if (countOfExamplesWithStatus "failed")}}<h2>Failures</h2>{{/if}}
+  {{#each (pp (examplesWithStatus "failed")) }}
     <pre>
       {{ . }}
     </pre>

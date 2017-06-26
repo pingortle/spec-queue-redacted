@@ -1,15 +1,21 @@
 import { Meteor } from 'meteor/meteor'
 import { Examples } from '/imports/api/examples/examples.js'
+import { DefaultJobQueue } from '/imports/api/jobs/jobs.js'
 import './build.html'
 
 Template.build.viewmodel({
-  examples() {
-    const buildId = this.resource()._id
-    return Examples.find({ buildId })
+  buildId() {
+    return this.resource()._id
   },
-  prettyExamples() {
-    return this.examples()
-      .map((example) => '\n' + JSON.stringify(example, null, '  '))
+  examples(selector = {}) {
+    const buildId = this.buildId()
+    return Examples.find(_.extend({ buildId }, selector))
+  },
+  examplesWithStatus(status) {
+    return this.examples({ status })
+  },
+  pp(collection) {
+    return collection.map((item) => '\n' + JSON.stringify(item, null, '  '))
   },
   jobIds() {
     return this.resource().jobIds || []
@@ -17,9 +23,19 @@ Template.build.viewmodel({
   prettyJobIds() {
     return this.jobIds().join(', ')
   },
-  autorun() {
-    const parameters = { buildId: this.resource()._id }
-    const log = (error, result) => console.log('Error?:', error, `complete?: ${result}`)
-    Meteor.call('builds.satisfied?', parameters, log)
+  jobStatuses() {
+    return DefaultJobQueue.jobStatuses
+  },
+  countOfJobsWithStatus(status) {
+    return DefaultJobQueue.find({
+      _id: { $in: this.resource().jobIds },
+      status
+    }).count()
+  },
+  exampleStatuses() {
+    return ['passed', 'failed', 'pending']
+  },
+  countOfExamplesWithStatus(status) {
+    return this.examples({ status }).count()
   }
 })

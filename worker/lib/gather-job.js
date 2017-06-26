@@ -1,3 +1,5 @@
+const glob = require('glob')
+
 const createGatherJobWorker = function ({ spawn, spawnSync, handleError, _, ddp }) {
   const gatherJob = function (job, callback) {
     const maxBuffer = 20000*1024
@@ -10,23 +12,18 @@ const createGatherJobWorker = function ({ spawn, spawnSync, handleError, _, ddp 
     console.log('******************** spawned stderr:', runData.stderr)
 
     const results = JSON.parse(runData.stdout)
-    const files = results.examples.map(result => result.file_path)
-    const uniqueFiles = Array.from(new Set(files))
-    const specFiles = uniqueFiles.filter(path => !path.startsWith('./spec/support'))
-
-    job.log(`number of spec files: ${specFiles.length}`)
 
     const criteria = {
       Collections: {
         Examples: {
-          count: Number(results.summary.example_count, 10)
+          count: Number(results.summary.example_count)
         }
       }
     }
 
     ddp.call('builds.begin', [{ buildId: job.data.buildId, criteria, metadata: results }, handleError])
 
-    specFiles.forEach((path) => {
+    glob.sync('spec/**/*_spec.rb').forEach((path) => {
       ddp.call('builds.addTestFile', [{ path, buildId: job.data.buildId }], handleError)
     })
 
