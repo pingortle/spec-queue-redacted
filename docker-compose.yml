@@ -63,5 +63,7 @@ services:
       TF_VAR_aws_access_key: ${AWS_ACCESS_KEY_ID}
       TF_VAR_aws_secret_key: ${AWS_SECRET_ACCESS_KEY}
       TF_VAR_aws_region: ${AWS_REGION}
+      TF_VAR_min_size: ${MIN_SIZE}
+      TF_VAR_max_size: ${MAX_SIZE}
     entrypoint: /bin/sh
     command: -c "terraform init && terraform apply"

@@ -17,9 +17,8 @@ module "stack" {
   name                  = "spec-queue-stack"
   keypair               = "spec-queue"
   ecs_instance_type     = "r4.xlarge"
-  ecs_min_size          = 1
-  ecs_max_size          = 1
-  ecs_desired_capacity  = 1
+  ecs_min_size          = "${var.min_size}"
+  ecs_max_size          = "${var.max_size}"
 }
 
 resource "aws_instance" "web" {
