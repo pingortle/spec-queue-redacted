@@ -16,6 +16,14 @@
     {{/each}}
   </dl>
 
+  <ol>
+    {{#each jobsWithStatus "ready" }}
+    <li>
+      {{ toFixed progress.percent 2 }}% - job metadata: <code>{{ stringify data }}</code>
+    </li>
+    {{/each}}
+  </ol>
+
   <h2>Examples</h2>
   <dl>
     {{#each status in exampleStatuses}}

@@ -18,6 +18,12 @@ Template.build.viewmodel({
   pp(collection) {
     return collection.map((item) => '\n' + JSON.stringify(item, null, '  '))
   },
+  stringify(data) {
+    return JSON.stringify(data)
+  },
+  toFixed(number, precision) {
+    return number.toFixed(precision)
+  },
   jobIds() {
     return this.resource().jobIds || []
   },
@@ -32,8 +38,11 @@ Template.build.viewmodel({
         "data.buildId": this.buildId()
       }, selector))
   },
+  jobsWithStatus(status) {
+    return this.jobs({ status })
+  },
   countOfJobsWithStatus(status) {
-    return this.jobs({ status }).count()
+    return this.jobsWithStatus(status).count()
   },
   exampleStatuses() {
     return ['passed', 'failed', 'pending']
