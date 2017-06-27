@@ -25,8 +25,13 @@ ddp.connect(function (error, isReconnecting) {
   handleDDPResponse(error, isReconnecting ? 'reconnecting...' : null)
   if (error || isReconnecting) return;
 
-  const testJob = createTestJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp })
-  const gatherJob = createGatherJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp })
+  const hostInfo = {
+    containerId: process.env.HOSTNAME,
+    ec2PublicDNS: process.env.EC2_HOSTNAME
+  }
+
+  const testJob = createTestJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
+  const gatherJob = createGatherJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
 
   const workerOptions = {
     concurrency: 1,

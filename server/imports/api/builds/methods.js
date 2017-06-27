@@ -54,11 +54,11 @@ Meteor.methods({
 
     return Builds.update(buildId, { $addToSet: { jobIds: { $each: jobIds } } })
   },
-  'builds.addExamples'({ buildId, examples }) {
+  'builds.addExamples'({ buildId, examples, hostInfo }) {
     check(buildId, String)
     check(examples, [Object])
 
-    return examples.map(example => Examples.insert({ buildId, ...example }))
+    return examples.map(example => Examples.insert({ buildId, ...example, hostInfo }))
   },
   'builds.begin'({ buildId, criteria, metadata, testFilePaths }) {
     check(buildId, String)

@@ -1,8 +1,9 @@
 const fs = require('fs')
 
-const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp }) {
+const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, hostInfo }) {
   const testJob = function (job, callback) {
     console.log(JSON.stringify(job))
+    job.log(JSON.stringify(hostInfo))
 
     const resultFilePath = `results-${job.doc._id}.json`
     const command = `bin/rspec ${job.data.path} -fj --out ${resultFilePath} --format progress`
@@ -48,7 +49,7 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp })
           const buildId = job.data.buildId
           const examples = results.examples
 
-          ddp.call('builds.addExamples', [{ buildId, examples }], (error, result) => {
+          ddp.call('builds.addExamples', [{ buildId, examples, hostInfo }], (error, result) => {
             handleJobError(error, result)
             if (!error) job.done('complete', handleJobError)
           })
