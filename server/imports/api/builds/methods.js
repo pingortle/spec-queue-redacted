@@ -49,7 +49,7 @@ Meteor.methods({
 
       const dependency = DefaultJobQueue.getJob(build.startJobId)
       const testJobId = testJob.depends([dependency])
-        .retry({ wait: 5 * 1000 /* milliseconds */ })
+        .retry({ retries: 5, wait: 5 * 1000 /* ms */ })
         .save()
 
       return Builds.update(buildId, { $addToSet: { jobIds: testJobId } })
