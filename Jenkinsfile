@@ -29,4 +29,16 @@ node('Kas') {
   stage('Deploy Worker') {
     sh 'docker-compose run --rm deploy-worker'
   }
+
+  stage('Test CLI') {
+    // TODO
+  }
+
+  stage('Build CLI') {
+    sh 'docker-compose run --rm build-cli'
+  }
+
+  stage('Deploy CLI') {
+    sh 'docker-compose run --rm deploy-cli'
+  }
 }

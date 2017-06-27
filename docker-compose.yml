@@ -41,6 +41,16 @@ services:
     working_dir: /workspace
     command: /bin/sh -c "npm install && pkg --out-path dist ."
 
+  build-cli:
+    build:
+      context: ./server
+      dockerfile: meteor-command.Dockerfile
+    volumes:
+      - ./cli:/workspace
+      - ./.pkg-cache:/root/.pkg-cache
+    working_dir: /workspace
+    command: /bin/sh -c "npm install && pkg --out-path dist ."
+
   deploy-worker:
     image: cgswong/aws:aws
     volumes:
@@ -51,7 +61,19 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
       S3_WORKER_BIN_BUCKET: ${S3_WORKER_BIN_BUCKET}
-    command: s3 cp dist s3://$S3_WORKER_BIN_BUCKET --recursive
+    command: s3 cp dist s3://$S3_WORKER_BIN_BUCKET/worker --recursive
+
+  deploy-cli:
+    image: cgswong/aws:aws
+    volumes:
+      - ./cli:/workspace
+    working_dir: /workspace
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
+      S3_WORKER_BIN_BUCKET: ${S3_WORKER_BIN_BUCKET}
+    command: s3 cp dist s3://$S3_WORKER_BIN_BUCKET/cli --recursive
 
   deploy-infrastructure:
     image: hashicorp/terraform:0.9.4
