@@ -99,6 +99,7 @@ if (Meteor.isServer) {
         const build = Builds.findOne(buildId)
         expect(build).to.have.deep.property('criteria', criteria)
         expect(build).to.have.deep.property('metadata', metadata)
+        expect(build.jobIds.length).to.equal(1)
       })
     })
 

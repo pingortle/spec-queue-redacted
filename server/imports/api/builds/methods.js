@@ -44,16 +44,15 @@ Meteor.methods({
     paths = _.flatten([path])
 
     const build = Builds.findOne(buildId)
-    return paths.map(path => {
+    const dependency = DefaultJobQueue.getJob(build.startJobId)
+    const jobIds = paths.map(path => {
       const testJob = new Job('default', 'test', { path, buildId })
-
-      const dependency = DefaultJobQueue.getJob(build.startJobId)
-      const testJobId = testJob.depends([dependency])
+      return testJob.depends([dependency])
         .retry({ retries: 5, wait: 5 * 1000 /* ms */ })
         .save()
-
-      return Builds.update(buildId, { $addToSet: { jobIds: testJobId } })
     })
+
+    return Builds.update(buildId, { $addToSet: { jobIds: { $each: jobIds } } })
   },
   'builds.addExamples'({ buildId, examples }) {
     check(buildId, String)

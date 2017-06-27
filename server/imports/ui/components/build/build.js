@@ -27,11 +27,13 @@ Template.build.viewmodel({
   jobStatuses() {
     return DefaultJobQueue.jobStatuses
   },
+  jobs(selector = {}) {
+    return DefaultJobQueue.find(_.extend({
+        "data.buildId": this.buildId()
+      }, selector))
+  },
   countOfJobsWithStatus(status) {
-    return DefaultJobQueue.find({
-      _id: { $in: this.jobIds() },
-      status
-    }).count()
+    return this.jobs({ status }).count()
   },
   exampleStatuses() {
     return ['passed', 'failed', 'pending']
@@ -43,7 +45,7 @@ Template.build.viewmodel({
     Meteor.call('builds.cancel', { buildId: this.buildId() })
   },
   autorun:[
-    function () { Meteor.subscribe('jobs.default.in', this.resource().jobIds) },
+    function () { Meteor.subscribe('jobs.default.forBuild', { buildId: this.buildId() }) },
     function () {
       const ids = this.examplesWithStatus('failed').map(example => example._id)
       Meteor.subscribe('examples.withDetails', ids)
