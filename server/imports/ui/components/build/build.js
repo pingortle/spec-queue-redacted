@@ -45,10 +45,11 @@ Template.build.viewmodel({
     Meteor.call('builds.cancel', { buildId: this.buildId() })
   },
   autorun:[
-    function () { Meteor.subscribe('jobs.default.forBuild', { buildId: this.buildId() }) },
     function () {
-      const ids = this.examplesWithStatus('failed').map(example => example._id)
-      Meteor.subscribe('examples.withDetails', ids)
+      Meteor.subscribe('jobs.default.forBuild', { buildId: this.buildId() })
+    },
+    function () {
+      Meteor.subscribe('examples.withDetails', { buildId: this.buildId(), status: 'failed' })
     }
   ]
 })
