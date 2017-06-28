@@ -52,15 +52,23 @@ ddp.connect(function (error, isReconnected) {
 
 if (process.env.DEBUG) {
   ddp.on('message', message => console.log(`ddp: ${message}`))
-  ddp.on('socket-close', (code, message) => {
-    testWorkers.pause()
-    gatherWorkers.pause()
-    console.log(`ddp close: ${code} - "${message}"`)
-  })
   ddp.on('socket-error', (error) => {
     console.log(`ddp error: ${error}`)
   })
 }
+
+ddp.on('socket-close', (code, message) => {
+  testWorkers.pause()
+  gatherWorkers.pause()
+  console.log(`ddp close: ${code} - "${message}"`)
+})
+
+process.on('beforeExit', (code) => {
+  const queues = [testWorkers, gatherWorkers]
+  queues.forEach(
+    queue => queue.shutdown({ level: 'hard' })
+  )
+})
 
 function handleDDPResponse(error, result) {
   if (error) console.error('******** Error:', error)
