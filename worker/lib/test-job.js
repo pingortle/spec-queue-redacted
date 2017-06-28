@@ -49,7 +49,7 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, h
           const buildId = job.data.buildId
           const examples = results.examples
 
-          ddp.call('builds.addExamples', [{ buildId, examples, hostInfo }], (error, result) => {
+          ddp.call('builds.addExamples', [{ jobId: job.doc._id, buildId, examples, hostInfo }], (error, result) => {
             handleJobError(error, result)
             if (!error) job.done('complete', handleJobError)
           })
