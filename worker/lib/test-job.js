@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { execFile } = require('child_process')
 
 const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, hostInfo }) {
   const testJob = function (job, callback) {
@@ -30,20 +31,14 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, h
     const options = {
       encoding: 'utf8',
       shell: true,
+      timeout: Number(process.env.CHILD_PROCESS_TIMEOUT_MILLISECONDS),
+      killSignal: 9,
       env
     }
 
     const rootCommand = command.split(' ')[0]
     const args = command.split(' ').slice(1)
-    const testRun = spawn(command, args, options)
-
-    let progress = 0
-    testRun.stdout.on('data', data => job.progress(progress, progress += 1, { echo: true }, handleError))
-    testRun.stderr.on('data', data => invokeOnConnection(handleError => job.log(data.toString(), { echo: true }, handleError)))
-
-    testRun.on('close', (code) => {
-      console.log(`child process exited with code ${code}`)
-
+    const testRun = execFile(command, args, options, (error, stdout, stderr) => {
       fs.readFile(resultFilePath, 'utf8', (error, data) => {
         let results = null
         let failure = null
@@ -82,12 +77,12 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, h
       })
     })
 
-    testRun.on('error', (error) => {
-      console.error(error)
-      invokeOnConnection(handleError => {
-        job.fail(error, handleError)
-        callback()
-      })
+    let progress = 0
+    testRun.stdout.on('data', data => job.progress(progress, progress += 1, { echo: true }, handleError))
+    testRun.stderr.on('data', data => invokeOnConnection(handleError => job.log(data.toString(), { echo: true }, handleError)))
+
+    testRun.on('close', (code) => {
+      console.log(`child process exited with code ${code}`)
     })
   }
 
