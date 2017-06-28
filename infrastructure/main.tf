@@ -19,6 +19,7 @@ module "stack" {
   ecs_instance_type     = "r4.xlarge"
   ecs_min_size          = "${var.min_size}"
   ecs_max_size          = "${var.max_size}"
+  ecs_desired_capacity = "${var.desired_capacity}"
 }
 
 resource "aws_instance" "web" {

@@ -87,5 +87,6 @@ services:
       TF_VAR_aws_region: ${AWS_REGION}
       TF_VAR_min_size: ${MIN_SIZE}
       TF_VAR_max_size: ${MAX_SIZE}
+      TF_VAR_desired_capacity: ${DESIRED_CAPACITY}
     entrypoint: /bin/sh
     command: -c "terraform init && terraform apply"

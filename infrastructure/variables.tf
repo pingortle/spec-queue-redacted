@@ -14,3 +14,7 @@ variable "min_size" {
 variable "max_size" {
   default = 1
 }
+
+variable "desired_capacity" {
+  default = 1
+}
