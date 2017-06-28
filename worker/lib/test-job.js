@@ -2,6 +2,23 @@ const fs = require('fs')
 
 const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, hostInfo }) {
   const testJob = function (job, callback) {
+    const invokeOnConnection = (handle) => {
+      invokeOn = (listener) => {
+        handle(error => {
+          console.log('removing new ddp connection listener...')
+          ddp.removeListener('connected', listener)
+        })
+      }
+
+      const connect = () => {
+        invokeOn(connect)
+      }
+
+      console.log('subscribing to new ddp connection...')
+      ddp.on('connected', connect)
+      invokeOn(connect)
+    }
+
     console.log(JSON.stringify(job))
     job.log(JSON.stringify(hostInfo))
 
@@ -20,49 +37,57 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, h
     const args = command.split(' ').slice(1)
     const testRun = spawn(command, args, options)
 
-    const handleJobError = (error, result) => {
-      if (error) job.fail()
-      handleError(error, result)
-    }
-
     let progress = 0
-    testRun.stdout.on('data', data => job.progress(progress, progress += 1, { echo: true }))
-    testRun.stderr.on('data', data => job.log(data.toString(), { echo: true }))
+    testRun.stdout.on('data', data => job.progress(progress, progress += 1, { echo: true }, handleError))
+    testRun.stderr.on('data', data => invokeOnConnection(handleError => job.log(data.toString(), { echo: true }, handleError)))
 
     testRun.on('close', (code) => {
       console.log(`child process exited with code ${code}`)
 
       fs.readFile(resultFilePath, 'utf8', (error, data) => {
         let results = null
+        let failure = null
 
         if (error) {
-          job.fail(error)
+          failure = error
         } else {
           try {
             results = JSON.parse(data)
           } catch (error) {
-            job.fail(error)
+            failure = error
           }
+        }
+
+        if (failure) {
+          invokeOnConnection(handleError => {
+            job.fail(failure, handleError)
+            callback()
+          })
         }
 
         if (results) {
           const buildId = job.data.buildId
           const examples = results.examples
 
-          ddp.call('builds.addExamples', [{ jobId: job.doc._id, buildId, examples, hostInfo }], (error, result) => {
-            handleJobError(error, result)
-            if (!error) job.done('complete', handleJobError)
+          invokeOnConnection(handleError => {
+            ddp.call('builds.addExamples', [{ jobId: job.doc._id, buildId, examples, hostInfo }], (error, result) => {
+              handleError(error, result)
+              job.done({ result }, (error, result) => {
+                handleError(error, result)
+                callback()
+              })
+            })
           })
         }
-
-        callback()
       })
     })
 
     testRun.on('error', (error) => {
       console.error(error)
-      job.fail(error)
-      callback()
+      invokeOnConnection(handleError => {
+        job.fail(error, handleError)
+        callback()
+      })
     })
   }
 

@@ -35,16 +35,31 @@ const workerOptions = {
 const testJob = createTestJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
 const gatherJob = createGatherJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
 
-const testWorkers = Job.processJobs('default', 'test', workerOptions, testJob)
-const gatherWorkers = Job.processJobs('default', 'start', workerOptions, gatherJob)
+const testWorkers = Job.processJobs('default', 'test', workerOptions, testJob).pause()
+const gatherWorkers = Job.processJobs('default', 'start', workerOptions, gatherJob).pause()
 
-ddp.connect(function (error, isReconnecting) {
-  handleDDPResponse(error, isReconnecting ? 'reconnecting...' : null)
-  if (!error) console.log('Ready to process jobs...')
+ddp.connect(function (error, isReconnected) {
+  if (error) {
+    testWorkers.pause()
+    gatherWorkers.pause()
+    return console.log('******** DDP Error:', error)
+  }
+
+  testWorkers.resume()
+  gatherWorkers.resume()
+  console.log('Ready to process jobs...')
 })
 
-function handleError(error) {
-  if (error) console.log(`******** Error: ${JSON.stringify(error)}`)
+if (process.env.DEBUG) {
+  ddp.on('message', message => console.log(`ddp: ${message}`))
+  ddp.on('socket-close', (code, message) => {
+    testWorkers.pause()
+    gatherWorkers.pause()
+    console.log(`ddp close: ${code} - "${message}"`)
+  })
+  ddp.on('socket-error', (error) => {
+    console.log(`ddp error: ${error}`)
+  })
 }
 
 function handleDDPResponse(error, result) {
