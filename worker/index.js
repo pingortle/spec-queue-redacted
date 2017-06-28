@@ -21,28 +21,26 @@ const ddp = new DDP({
 
 Job.setDDP(ddp)
 
+const hostInfo = {
+  containerId: process.env.HOSTNAME,
+  ec2PublicDNS: process.env.EC2_HOSTNAME
+}
+
+const workerOptions = {
+  concurrency: 1,
+  prefetch: 0,
+  workTimeout: Number(process.env.WORKER_TIMEOUT_MILLISECONDS) || (void 0),
+}
+
+const testJob = createTestJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
+const gatherJob = createGatherJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
+
+const testWorkers = Job.processJobs('default', 'test', workerOptions, testJob)
+const gatherWorkers = Job.processJobs('default', 'start', workerOptions, gatherJob)
+
 ddp.connect(function (error, isReconnecting) {
   handleDDPResponse(error, isReconnecting ? 'reconnecting...' : null)
-  if (error || isReconnecting) return;
-
-  const hostInfo = {
-    containerId: process.env.HOSTNAME,
-    ec2PublicDNS: process.env.EC2_HOSTNAME
-  }
-
-  const testJob = createTestJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
-  const gatherJob = createGatherJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
-
-  const workerOptions = {
-    concurrency: 1,
-    prefetch: 0,
-    workTimeout: Number(process.env.WORKER_TIMEOUT_MILLISECONDS) || (void 0),
-  }
-
-  const testWorkers = Job.processJobs('default', 'test', workerOptions, testJob)
-  const gatherWorkers = Job.processJobs('default', 'start', workerOptions, gatherJob)
-
-  console.log('Ready to process jobs...')
+  if (!error) console.log('Ready to process jobs...')
 })
 
 function handleError(error) {
