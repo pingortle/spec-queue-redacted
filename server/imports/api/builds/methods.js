@@ -39,7 +39,8 @@ Meteor.methods({
     check(buildId, String)
 
     const build = Builds.findOne(buildId)
-    DefaultJobQueue.cancelJobs(build.jobIds || [])
+    const jobs = _.compact([build.jobId].concat(build.jobIds))
+    DefaultJobQueue.cancelJobs(jobs)
 
     return Builds.update(buildId, { $set: { status: 'cancelled' } })
   },
