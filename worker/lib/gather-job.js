@@ -23,12 +23,14 @@ const createGatherJobWorker = function ({ spawn, spawnSync, handleError, _, ddp 
 
     const requestSpecs = glob.sync('spec/requests/**/*_spec.rb')
     const nonRequestSpecs = glob.sync('spec/!(requests)/**/*_spec.rb')
+    const testFilePaths = requestSpecs.concat(nonRequestSpecs)
 
     ddp.call('builds.begin', [{
       buildId: job.data.buildId,
       criteria,
-      metadata: results,
-      testFilePaths: requestSpecs.concat(nonRequestSpecs)
+      testFilePaths,
+      totalExamples: Number(results.summary.example_count),
+      metadata: results
     }], handleError)
 
     job.done('complete', handleError)
