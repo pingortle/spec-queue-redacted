@@ -5,15 +5,16 @@ import { DefaultJobQueue } from '../jobs/jobs.js'
 import { Examples } from '../examples/examples.js'
 
 Meteor.methods({
-  'builds.createJob'({ gitCommitId }) {
-    check(buildId, Match.Optional(String))
+  'builds.createJob'(options) {
+    const gitCommitId = options && options.gitCommitId
+    check(gitCommitId, Match.Optional(String))
 
     const startQueueName = gitCommitId ? `start-${gitCommitId}` : 'start'
 
     const doc = {
       jobIds: [],
       createdAt: new Date(),
-      gitCommitId,
+      gitCommitId
     }
 
     const buildId = Builds.insert(doc)
