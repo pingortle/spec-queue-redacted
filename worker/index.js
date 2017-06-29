@@ -16,7 +16,7 @@ const ddp = new DDP({
   host: process.env.METEOR_HOST || "127.0.0.1",
   port: process.env.METEOR_PORT || 3000,
   autoReconnect : true,
-  useSockJs: true,
+  useSockJs: true
 })
 
 Job.setDDP(ddp)
@@ -28,14 +28,17 @@ const hostInfo = {
 
 const workerOptions = {
   concurrency: 1,
-  prefetch: 0,
-  workTimeout: Number(process.env.WORKER_TIMEOUT_MILLISECONDS) || (void 0),
+  prefetch: 0
+}
+
+const testWorkerOptions = {
+  workTimeout: Number(process.env.WORKER_TIMEOUT_MILLISECONDS) || (void 0)
 }
 
 const testJob = createTestJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
 const gatherJob = createGatherJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
 
-const testWorkers = Job.processJobs('default', 'test', workerOptions, testJob).pause()
+const testWorkers = Job.processJobs('default', 'test', _.extend(workerOptions, testWorkerOptions), testJob).pause()
 const gatherWorkers = Job.processJobs('default', 'start', workerOptions, gatherJob).pause()
 
 ddp.connect(function (error, isReconnected) {
