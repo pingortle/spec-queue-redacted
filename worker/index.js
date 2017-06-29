@@ -42,7 +42,7 @@ const gitCommitId = process.env.GIT_COMMIT
 const testQueueName = gitCommitId ? `test-${gitCommitId}` : 'test'
 const startQueueName = gitCommitId ? `start-${gitCommitId}` : 'start'
 
-const testWorkers = Job.processJobs('default', testQueueName, _.extend(workerOptions, testWorkerOptions), testJob).pause()
+const testWorkers = Job.processJobs('default', testQueueName, _.extend(_.clone(workerOptions), testWorkerOptions), testJob).pause()
 const gatherWorkers = Job.processJobs('default', startQueueName, workerOptions, gatherJob).pause()
 
 ddp.connect(function (error, isReconnected) {
