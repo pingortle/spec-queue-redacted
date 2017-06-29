@@ -53,6 +53,13 @@ Template.build.viewmodel({
   cancel() {
     Meteor.call('builds.cancel', { buildId: this.buildId() })
   },
+  failJob(job) {
+    console.log(job)
+    job = new Job(DefaultJobQueue, job)
+    job.fail('Failed by user', (error, result) => {
+      console.log(error, result)
+    })
+  },
   autorun:[
     function () {
       Meteor.subscribe('jobs.default.forBuild', { buildId: this.buildId() })
