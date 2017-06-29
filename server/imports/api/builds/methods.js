@@ -5,15 +5,20 @@ import { DefaultJobQueue } from '../jobs/jobs.js'
 import { Examples } from '../examples/examples.js'
 
 Meteor.methods({
-  'builds.createJob'() {
+  'builds.createJob'({ gitCommitId }) {
+    check(buildId, Match.Optional(String))
+
+    const startQueueName = gitCommitId ? `start-${gitCommitId}` : 'start'
+
     const doc = {
       jobIds: [],
       createdAt: new Date(),
+      gitCommitId,
     }
 
     const buildId = Builds.insert(doc)
 
-    const job = new Job('default', 'start', { buildId })
+    const job = new Job('default', startQueueName, { buildId })
     const jobId = job.save()
 
     Builds.update(buildId, { $set: { startJobId: jobId } })
@@ -44,9 +49,11 @@ Meteor.methods({
     paths = _.flatten([path])
 
     const build = Builds.findOne(buildId)
+    const testQueueName = build.gitCommitId ? `test-${build.gitCommitId}` : 'test'
+
     const dependency = DefaultJobQueue.getJob(build.startJobId)
     const jobIds = paths.map(path => {
-      const testJob = new Job('default', 'test', { path, buildId })
+      const testJob = new Job('default', testQueueName, { path, buildId })
       return testJob.depends([dependency])
         .retry({ retries: 5, wait: 5 * 1000 /* ms */ })
         .save()

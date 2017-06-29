@@ -1,5 +1,8 @@
 <template name="build">
   <h1>Build <small>{{ resource.status }}</small></h1>
+  {{#if resource.gitCommitId }}
+    <h2>Git Commit: {{ resource.gitCommitId }}</h2>
+  {{/if }}
 
   <button class="btn btn-danger" {{b "click: cancel"}}>Cancel</button>
 

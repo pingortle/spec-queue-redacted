@@ -38,8 +38,12 @@ const testWorkerOptions = {
 const testJob = createTestJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
 const gatherJob = createGatherJobWorker({ spawn, spawnSync, handleError: handleDDPResponse, _, ddp, hostInfo })
 
-const testWorkers = Job.processJobs('default', 'test', _.extend(workerOptions, testWorkerOptions), testJob).pause()
-const gatherWorkers = Job.processJobs('default', 'start', workerOptions, gatherJob).pause()
+const gitCommitId = process.env.GIT_COMMIT
+const testQueueName = gitCommitId ? `test-${gitCommitId}` : 'test'
+const startQueueName = gitCommitId ? `start-${gitCommitId}` : 'start'
+
+const testWorkers = Job.processJobs('default', testQueueName, _.extend(workerOptions, testWorkerOptions), testJob).pause()
+const gatherWorkers = Job.processJobs('default', startQueueName, workerOptions, gatherJob).pause()
 
 ddp.connect(function (error, isReconnected) {
   if (error) {
