@@ -67,17 +67,29 @@ Meteor.methods({
     check(buildId, String)
     check(examples, [Object])
 
-    return examples.map(example => Examples.insert({ jobId, buildId, ...example, hostInfo }))
+    const exampleResults = examples.map(example => Examples.insert({ jobId, buildId, ...example, hostInfo }))
+
+    const build = Builds.findOne(buildId)
+    if (!build.status) {
+      if (_(examples).any(example => example.status === 'failed')) {
+        Builds.update(buildId, { $set: { status: 'failed' } })
+      } else if (Examples.find({ buildId }).count() === build.totalExamples) {
+        Builds.update(buildId, { $set: { status: 'passed' } })
+      }
+    }
+
+    return exampleResults
   },
-  'builds.begin'({ buildId, criteria, metadata, testFilePaths }) {
+  'builds.begin'({ buildId, totalExamples, criteria, metadata, testFilePaths }) {
     check(buildId, String)
+    check(totalExamples, Number)
     check(criteria, Object)
     check(metadata, Object)
     check(testFilePaths, [String])
 
     Meteor.call('builds.addTestFile', { buildId, path: testFilePaths })
 
-    return Builds.update(buildId, { $set: { criteria, metadata } })
+    return Builds.update(buildId, { $set: { criteria, metadata, totalExamples } })
   },
   'builds.satisfied?'({ buildId }) {
     check(buildId, String)
