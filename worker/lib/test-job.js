@@ -4,9 +4,6 @@ const { execFile } = require('child_process')
 const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, hostInfo }) {
   const testJob = function (job, callback) {
     let failedExternally = false
-    const subscription = ddp.subscribe('jobs.default.in', [[job._doc._id]], () => {
-      console.log('Subscribed to job changes...')
-    })
 
     const invokeOnConnection = (handle) => {
       invokeOn = (listener) => {
@@ -24,6 +21,14 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, h
       ddp.on('connected', connect)
       invokeOn(connect)
     }
+
+    let subscription = null
+    invokeOnConnection(handle => {
+      subscription = ddp.subscribe('jobs.default.in', [[job._doc._id]], () => {
+        console.log('Subscribed to job changes...')
+        handle()
+      })
+    })
 
     console.log(JSON.stringify(job))
     job.log(JSON.stringify(hostInfo))
