@@ -3,6 +3,11 @@ const { execFile } = require('child_process')
 
 const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, hostInfo }) {
   const testJob = function (job, callback) {
+    let failedExternally = false
+    const subscription = ddp.subscribe('jobs.default.in', [[job._doc._id]], () => {
+      console.log('Subscribed to job changes...')
+    })
+
     const invokeOnConnection = (handle) => {
       invokeOn = (listener) => {
         handle(error => {
@@ -39,6 +44,14 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, h
     const rootCommand = command.split(' ')[0]
     const args = command.split(' ').slice(1)
     const testRun = execFile(command, args, options, (error, stdout, stderr) => {
+      ddp.unsubscribe(subscription)
+      observer.stop()
+
+      if (failedExternally) {
+        console.log('Failed externally. Skipping results...')
+        return callback()
+      }
+
       fs.readFile(resultFilePath, 'utf8', (error, data) => {
         let results = null
         let failure = null
@@ -53,12 +66,7 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, h
           }
         }
 
-        if (failure) {
-          invokeOnConnection(handleError => {
-            job.fail(failure, handleError)
-            callback()
-          })
-        }
+        if (failure) console.error(failure)
 
         if (results) {
           const buildId = job.data.buildId
@@ -66,19 +74,40 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, h
 
           invokeOnConnection(handleError => {
             ddp.call('builds.addExamples', [{ jobId: job.doc._id, buildId, examples, hostInfo }], (error, result) => {
-              handleError(error, result)
               job.done({ result }, (error, result) => {
                 handleError(error, result)
                 callback()
               })
             })
           })
+        } else {
+          invokeOnConnection(handleError => {
+            job.fail(failure, error => {
+              handleError(error)
+              throw failure
+            })
+          })
         }
       })
     })
 
+    const observer = ddp.observe('default.jobs')
+    observer.changed = (id, oldFields, clearedFields, newFields) => {
+      if (newFields.status && newFields.status !== 'running') {
+        ddp.unsubscribe(subscription)
+        observer.stop()
+
+        console.log('Killing task...')
+        failedExternally = true
+        testRun.kill('SIGINT')
+      }
+    }
+
     let progress = 0
-    testRun.stdout.on('data', data => job.progress(progress, progress += 1, { echo: true }, handleError))
+    testRun.stdout.on('data', data => {
+      job.progress(progress, progress += 1, { echo: true }, handleError)
+      invokeOnConnection(handleError => job.log(data.toString(), { echo: true }, handleError))
+    })
     testRun.stderr.on('data', data => invokeOnConnection(handleError => job.log(data.toString(), { echo: true }, handleError)))
 
     testRun.on('close', (code) => {
