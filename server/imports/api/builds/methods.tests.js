@@ -95,7 +95,7 @@ if (Meteor.isServer) {
           tags: ['cool', 'challenging']
         }
 
-        subject.apply({}, [{ buildId, criteria, metadata, testFilePaths: ['file.test'] }])
+        subject.apply({}, [{ buildId, criteria, metadata, testFilePaths: ['file.test'], totalExamples: 123 }])
         const build = Builds.findOne(buildId)
         expect(build).to.have.deep.property('criteria', criteria)
         expect(build).to.have.deep.property('metadata', metadata)
