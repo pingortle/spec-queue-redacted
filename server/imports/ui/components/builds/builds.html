@@ -6,7 +6,7 @@
       <li data-id="{{_id}}">
         <button class="btn btn-danger btn-xs" {{b "click: destroy(this)"}}>Destroy</button>
         <a href="builds/{{_id}}">
-          {{ createdAt }} - <code>Build: {{ _id }}</code>
+          {{ createdAt }} - <code>Build: {{ _id }}</code> Status: {{ displayStatus(this.status) }}
         </a>
       </li>
     {{/each}}

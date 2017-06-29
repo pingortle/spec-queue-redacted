@@ -8,6 +8,7 @@ Template.builds.viewmodel({
   startBuild: function (event) {
     Meteor.call('builds.createJob')
   },
+  displayStatus: status => (status || 'running'),
   destroy: function (subject) {
     Meteor.call('builds.destroy', { buildId: subject._id }, (error) => {
       if (error) console.error(error)
