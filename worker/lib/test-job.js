@@ -1,4 +1,5 @@
 const fs = require('fs')
+const kill = require('tree-kill')
 const { execFile } = require('child_process')
 
 const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, hostInfo }) {
@@ -102,9 +103,11 @@ const createTestJobWorker = function ({ spawn, spawnSync, handleError, _, ddp, h
         ddp.unsubscribe(subscription)
         observer.stop()
 
-        console.log('Killing task...')
+        job.log('Killing task...', { echo: true })
         failedExternally = true
-        testRun.kill('SIGINT')
+        kill(testRun.pid, 'SIGKILL', function (error) {
+          console.error(error)
+        })
       }
     }
 

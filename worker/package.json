@@ -21,6 +21,7 @@
     "ddp-login": "^1.0.10",
     "glob": "^7.1.2",
     "meteor-job": "^1.5.1",
+    "tree-kill": "^1.1.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

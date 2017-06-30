@@ -20,8 +20,8 @@ Template.build.viewmodel({
   examplesWithStatus(status) {
     return this.examples({ status })
   },
-  pp(collection) {
-    return collection.map((item) => '\n' + JSON.stringify(item, null, '  '))
+  pp(item) {
+    return JSON.stringify(item, null, '  ')
   },
   stringify(data) {
     return JSON.stringify(data)
@@ -63,6 +63,13 @@ Template.build.viewmodel({
     job = new Job(DefaultJobQueue, job)
     job.fail('Failed by user', (error, result) => {
       console.log(error, result)
+      job.priority('high').save()
+    })
+  },
+  rerunExample(example) {
+    Meteor.call('examples.rerun', { exampleId: example._id }, (error, result) => {
+      if (error) console.error(error)
+      if (result) console.log(result)
     })
   },
   autorun: [
