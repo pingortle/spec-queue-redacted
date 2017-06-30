@@ -5,6 +5,11 @@ import './build.html'
 import './build.less'
 
 Template.build.viewmodel({
+  jobsLoaded: false,
+  examplesLoaded: false,
+  loaded() {
+    return this.jobsLoaded() && this.examplesLoaded()
+  },
   buildId() {
     return this.resource()._id
   },
@@ -60,12 +65,16 @@ Template.build.viewmodel({
       console.log(error, result)
     })
   },
-  autorun:[
+  autorun: [
     function () {
-      Meteor.subscribe('jobs.default.forBuild', { buildId: this.buildId() })
+      Meteor.subscribe('jobs.default.forBuild', { buildId: this.buildId() }, () => {
+        this.jobsLoaded(true)
+      })
     },
     function () {
-      Meteor.subscribe('examples.withDetails', { buildId: this.buildId(), status: 'failed' })
+      Meteor.subscribe('examples.withDetails', { buildId: this.buildId(), status: 'failed' }, () => {
+        this.examplesLoaded(true)
+      })
     }
   ]
 })

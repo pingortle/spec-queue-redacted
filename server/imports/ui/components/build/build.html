@@ -1,4 +1,5 @@
 <template name="build">
+  {{#unless loaded }}{{> spinner}}{{/unless}}
   <h1>Build <small>{{ resource.status }}</small></h1>
   {{#if resource.gitCommitId }}
     <h2>Git Commit: {{ resource.gitCommitId }}</h2>
@@ -29,6 +30,7 @@
   </ol>
 
   <h2>Examples</h2>
+
   <dl>
     {{#each status in exampleStatuses}}
       <dt>
