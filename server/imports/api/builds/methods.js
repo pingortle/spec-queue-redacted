@@ -30,7 +30,7 @@ Meteor.methods({
     check(buildId, String)
 
     const build = Builds.findOne(buildId)
-    DefaultJobQueue.cancelJobs(build.jobIds || [])
+    DefaultJobQueue.cancelJobs(_.compact([].concat(build.jobIds)))
     Examples.remove({ buildId })
 
     return Builds.remove(buildId)
