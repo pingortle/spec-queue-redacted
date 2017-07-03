@@ -63,7 +63,6 @@ Template.build.viewmodel({
     job = new Job(DefaultJobQueue, job)
     job.fail('Failed by user', (error, result) => {
       console.log(error, result)
-      job.priority('high').save()
     })
   },
   rerunExample(example) {
