@@ -24,6 +24,10 @@ Meteor.methods({
 
     Builds.update(buildId, { $set: { startJobId: jobId } })
 
+    const hipchat = new HipChatNotify()
+    const url = `${process.env.ROOT_URL}/builds/${buildId}`
+    hipchat.info(`New spec queue build started at <a href="${url}">${url}</a>...`)
+
     return buildId
   },
   'builds.destroy'({ buildId }) {
