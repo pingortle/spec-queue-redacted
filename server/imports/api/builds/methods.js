@@ -70,12 +70,9 @@ Meteor.methods({
     const exampleResults = examples.map(example => Examples.insert({ jobId, buildId, ...example, hostInfo }))
 
     const build = Builds.findOne(buildId)
-    if (!build.status) {
-      if (_(examples).any(example => example.status === 'failed')) {
-        Builds.update(buildId, { $set: { status: 'failed' } })
-      } else if (Examples.find({ buildId }).count() === build.totalExamples) {
-        Builds.update(buildId, { $set: { status: 'passed' } })
-      }
+    if (!build.status && Examples.find({ buildId }).count() === build.totalExamples) {
+      const status = Examples.find({ buildId, status: 'failed' }).count() > 0 ? 'failed' : 'passed'
+      Builds.update(buildId, { $set: { status } })
     }
 
     return exampleResults
