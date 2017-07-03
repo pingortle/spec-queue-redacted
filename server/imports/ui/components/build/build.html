@@ -2,7 +2,7 @@
   {{#unless loaded }}{{> spinner}}{{/unless}}
   <h1>Build <small>{{ resource.status }}</small></h1>
   {{#if resource.gitCommitId }}
-    <h2>Git Commit: {{ resource.gitCommitId }}</h2>
+    <h2>Git Commit: <small>{{ resource.gitCommitId }}</small></h2>
   {{/if }}
 
   <button class="btn btn-danger" {{b "click: cancel"}}>Cancel</button>
