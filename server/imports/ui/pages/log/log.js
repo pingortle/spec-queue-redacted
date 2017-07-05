@@ -7,5 +7,5 @@ import '../../components/log/log.js'
 Template.App_log.viewmodel({
   params() { return FlowRouter.current().params },
   resource() { return DefaultJobQueue.findOne(this.params().jobId) || {} },
-  autorun() { Meteor.subscribe('jobs.default.in', [this.params().jobId]) }
+  onRendered() { Meteor.BuildSubscriber.subscribe('jobs.default.in', [this.params().jobId]) }
 })

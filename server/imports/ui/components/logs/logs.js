@@ -4,9 +4,9 @@ import './logs.html'
 
 Template.logs.viewmodel({
   loaded: false,
-  autorun() {
+  onRendered() {
     console.log(this.buildId())
-    Meteor.subscribe('jobs.default.forBuild', { buildId: this.buildId() }, () => {
+    Meteor.BuildSubscriber.subscribe('jobs.default.forBuild', { buildId: this.buildId() }, () => {
       this.loaded(true)
     })
   }
