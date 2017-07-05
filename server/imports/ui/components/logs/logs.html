@@ -1,0 +1,10 @@
+<template name="logs">
+  <div class="list-group">
+    {{#each resources }}
+      <a href="/logs/{{_id}}" class="list-group-item">
+        <code>{{_id}}</code> - {{ data.path }}
+        <span class="badge">{{ status }}</span>
+      </a>
+    {{/each}}
+  </div>
+</template>

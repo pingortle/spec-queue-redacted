@@ -45,8 +45,7 @@
   {{#if (countOfExamplesWithStatus "failed") }}<h3>Failures</h3>{{/if}}
   {{#each (examplesWithStatus "failed") }}
     <button class="btn btn-default" {{b "click: rerunExample(this)"}}>Rerun</button>
-    <pre>
-      {{ pp this }}
-    </pre>
+    <a href="/logs/{{ jobId }}">Log</a>
+    <pre>{{ pp this }}</pre>
   {{/each}}
 </template>

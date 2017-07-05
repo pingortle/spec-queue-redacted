@@ -1,0 +1,8 @@
+<template name="log">
+  {{#unless loaded }}{{> spinner}}{{/unless}}
+
+  <h1>Job <small>{{ resource.data.path }}</small></h1>
+
+  <button class="btn btn-default" {{b "click: fetchLog()"}}>Reload</button>
+  <pre>{{ prettyLog }}</pre>
+</template>

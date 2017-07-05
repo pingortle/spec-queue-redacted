@@ -5,6 +5,8 @@ import { BlazeLayout } from 'meteor/kadira:blaze-layout'
 import '../../ui/layouts/body/body.js'
 import '../../ui/pages/builds/builds.js'
 import '../../ui/pages/build/build.js'
+import '../../ui/pages/logs/logs.js'
+import '../../ui/pages/log/log.js'
 import '../../ui/pages/home/home.js'
 import '../../ui/pages/not-found/not-found.js'
 
@@ -27,6 +29,20 @@ FlowRouter.route('/builds/:buildId', {
   name: 'App.build',
   action() {
     BlazeLayout.render('App_body', { main: 'App_build' })
+  },
+})
+
+FlowRouter.route('/builds/:buildId/logs', {
+  name: 'App.logs',
+  action() {
+    BlazeLayout.render('App_body', { main: 'App_logs' })
+  },
+})
+
+FlowRouter.route('/logs/:jobId', {
+  name: 'App.log',
+  action() {
+    BlazeLayout.render('App_body', { main: 'App_log' })
   },
 })
 
