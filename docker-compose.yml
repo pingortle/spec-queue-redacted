@@ -29,6 +29,8 @@ services:
     volumes:
       - ./server:/workspace
     working_dir: /workspace
+    environment:
+      CLUSTER_WORKERS_COUNT: 0
     command: /bin/bash -c "meteor npm install && meteor test --once --driver-package dispatch:mocha"
 
   build-worker:
