@@ -3,6 +3,7 @@
 import '../../api/builds/methods.js'
 import '../../api/builds/server/publications.js'
 
+import  '../../api/jobs/methods.js'
 import  '../../api/jobs/server/publications.js'
 
 import '../../api/examples/methods.js'

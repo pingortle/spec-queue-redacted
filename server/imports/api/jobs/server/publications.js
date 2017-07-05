@@ -1,16 +1,18 @@
 import { Meteor } from 'meteor/meteor'
 import { DefaultJobQueue } from '../jobs.js'
 
+const defaultOptions = { fields: { log: 0 } }
+
 Meteor.publish('jobs.default', function () {
-  return DefaultJobQueue.find({})
+  return DefaultJobQueue.find({}, defaultOptions)
 })
 
 Meteor.publish('jobs.default.in', function (ids) {
-  return DefaultJobQueue.find({ _id: { $in: ids } })
+  return DefaultJobQueue.find({ _id: { $in: ids } }, defaultOptions)
 })
 
 Meteor.publish('jobs.default.forBuild', function ({ buildId }) {
-  return DefaultJobQueue.find({ "data.buildId": buildId })
+  return DefaultJobQueue.find({ "data.buildId": buildId }, defaultOptions)
 })
 
 DefaultJobQueue.allow({
