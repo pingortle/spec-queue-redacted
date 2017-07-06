@@ -4,5 +4,7 @@
   <h1>Job <small>{{ resource.data.path }}</small></h1>
 
   <button class="btn btn-default" {{b "click: fetchLog()"}}>Reload</button>
+  <button class="btn" {{b "toggle: autoReload, class: autoReloadClass" }}>Toggle Auto Reload</button>
   <pre>{{ prettyLog }}</pre>
+  <button class="btn btn-default" {{b "click: fetchLog()"}}>Reload</button>
 </template>
