@@ -24,6 +24,7 @@
     {{#each jobsWithStatus "running" }}
       <li>
         <button class="btn btn-xs btn-danger" {{b "click: failJob(this)"}}>Restart</button>
+        <a href="/logs/{{ _id }}">Log</a>
         {{ toFixed progress.percent 2 }}% - job id: <code>{{ _id }}</code> - job metadata: <code>{{ stringify data }}</code>
       </li>
     {{/each}}
