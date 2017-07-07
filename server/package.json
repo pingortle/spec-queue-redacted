@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "start": "meteor run",
-    "test": "meteor test --once --driver-package dispatch:mocha",
+    "test": "TEST_BROWSER_DRIVER=nightmare meteor test --once --driver-package dispatch:mocha --port 3030",
     "watch-tests": "meteor test --driver-package practicalmeteor:mocha"
   },
   "dependencies": {
@@ -13,6 +13,7 @@
   "devDependencies": {
     "chai": "^4.0.2",
     "faker": "^4.1.0",
+    "nightmare": "^2.10.0",
     "sinon": "^2.3.5",
     "sinon-chai": "^2.11.0"
   }
