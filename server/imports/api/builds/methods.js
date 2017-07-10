@@ -11,10 +11,15 @@ Meteor.methods({
 
     const startQueueName = gitCommitId ? `start-${gitCommitId}` : 'start'
 
+    const exampleCounts = {}
+    const jobCounts = {}
+
     const doc = {
       jobIds: [],
       createdAt: new Date(),
-      gitCommitId
+      gitCommitId,
+      exampleCounts,
+      jobCounts
     }
 
     const buildId = Builds.insert(doc)

@@ -7,6 +7,7 @@
     "watch-tests": "meteor test --port 3030 --driver-package practicalmeteor:mocha"
   },
   "dependencies": {
+    "JSONPath": "^0.11.2",
     "babel-runtime": "^6.20.0",
     "meteor-node-stubs": "~0.2.4"
   },

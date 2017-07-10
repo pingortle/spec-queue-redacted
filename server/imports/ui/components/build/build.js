@@ -8,7 +8,7 @@ Template.build.viewmodel({
   jobsLoaded: false,
   examplesLoaded: false,
   loaded() {
-    return this.jobsLoaded() && this.examplesLoaded()
+    return Meteor.BuildSubscriber.ready()
   },
   buildId() {
     return this.resource()._id
@@ -47,13 +47,13 @@ Template.build.viewmodel({
     return this.jobs({ status })
   },
   countOfJobsWithStatus(status) {
-    return this.jobsWithStatus(status).count()
+    return this.resource().jobCounts[status] || 0
   },
   exampleStatuses() {
     return ['passed', 'failed', 'pending']
   },
   countOfExamplesWithStatus(status) {
-    return this.examples({ status }).count()
+    return this.resource().exampleCounts[status] || 0
   },
   cancel() {
     Meteor.call('builds.cancel', { buildId: this.buildId() })
@@ -73,12 +73,12 @@ Template.build.viewmodel({
   },
   autorun: [
     function () {
-      Meteor.subscribe('jobs.default.forBuild', { buildId: this.buildId() }, () => {
+      Meteor.BuildSubscriber.subscribe('jobs.default.forBuild', { buildId: this.buildId() }, () => {
         this.jobsLoaded(true)
       })
     },
     function () {
-      Meteor.subscribe('examples.withDetails', { buildId: this.buildId(), status: 'failed' }, () => {
+      Meteor.BuildSubscriber.subscribe('examples.withDetails', { buildId: this.buildId(), status: 'failed' }, () => {
         this.examplesLoaded(true)
       })
     }

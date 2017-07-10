@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor'
+import { Tracker } from 'meteor/tracker'
 import { reactiveInterval } from 'meteor/teamgrid:reactive-interval'
 import { DefaultJobQueue } from '../../../api/jobs/jobs.js'
 import './log.html'

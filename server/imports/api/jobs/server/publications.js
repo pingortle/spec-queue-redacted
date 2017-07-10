@@ -12,7 +12,7 @@ Meteor.publish('jobs.default.in', function (ids) {
 })
 
 Meteor.publish('jobs.default.forBuild', function ({ buildId }) {
-  return DefaultJobQueue.find({ "data.buildId": buildId }, defaultOptions)
+  return DefaultJobQueue.find({ "data.buildId": buildId, status: 'running' }, defaultOptions)
 })
 
 DefaultJobQueue.allow({

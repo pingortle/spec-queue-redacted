@@ -50,6 +50,7 @@ manuel:isdev@1.0.0
 manuel:reactivearray@1.0.5
 manuel:viewmodel@6.3.0
 manuel:viewmodel-debug@2.7.1
+matb33:collection-hooks@0.8.4
 meteor@1.6.1
 meteor-base@1.1.0
 meteorhacks:cluster@1.6.9

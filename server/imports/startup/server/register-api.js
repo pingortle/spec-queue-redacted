@@ -2,6 +2,7 @@
 
 import '../../api/builds/methods.js'
 import '../../api/builds/server/publications.js'
+import '../../api/builds/server/computed-fields.js'
 
 import  '../../api/jobs/methods.js'
 import  '../../api/jobs/server/publications.js'
