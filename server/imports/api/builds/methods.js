@@ -33,8 +33,8 @@ Meteor.methods({
   'builds.destroy'({ buildId }) {
     check(buildId, String)
 
+    Meteor.call('builds.cancel', { buildId })
     const build = Builds.findOne(buildId)
-    DefaultJobQueue.cancelJobs(_.compact([].concat(build.jobIds)))
     Examples.remove({ buildId })
 
     return Builds.remove(buildId)
@@ -43,8 +43,12 @@ Meteor.methods({
     check(buildId, String)
 
     const build = Builds.findOne(buildId)
-    const jobs = _.compact([build.jobId].concat(build.jobIds))
-    DefaultJobQueue.cancelJobs(jobs)
+    const jobQuery = DefaultJobQueue.find({
+        'data.buildId': buildId,
+        status: { $in: DefaultJobQueue.jobStatusCancellable }
+      })
+
+    DefaultJobQueue.cancelJobs(jobQuery.map(job => job._id))
 
     return Builds.update(buildId, { $set: { status: 'cancelled' } })
   },
