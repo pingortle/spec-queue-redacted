@@ -4,7 +4,7 @@
   "scripts": {
     "start": "meteor run",
     "test": "TEST_BROWSER_DRIVER=nightmare meteor test --once --driver-package dispatch:mocha --port 3030",
-    "watch-tests": "meteor test --driver-package practicalmeteor:mocha"
+    "watch-tests": "meteor test --port 3030 --driver-package practicalmeteor:mocha"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",

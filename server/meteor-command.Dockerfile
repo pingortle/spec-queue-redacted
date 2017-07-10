@@ -16,6 +16,14 @@ WORKDIR /meteor
 
 RUN curl https://install.meteor.com | /bin/sh
 
+# Support for headless browser testing
+RUN apt-get install -y --no-install-recommends xvfb xauth \
+  x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable \
+  xfonts-cyrillic x11-apps clang libdbus-1-dev libgtk2.0-dev \
+  libnotify-dev libgnome-keyring-dev libgconf2-dev libasound2-dev \
+  libcap-dev libcups2-dev libxtst-dev libxss1 libnss3-dev \
+  gcc-multilib g++-multilib
+
 ENV METEOR_ALLOW_SUPERUSER true
 
 EXPOSE 3000
