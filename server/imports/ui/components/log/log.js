@@ -19,22 +19,29 @@ Template.log.viewmodel({
     })
   },
   autoReloadClass() { return this.autoReload() ? 'btn-success' : 'btn-default' },
-  fetchLog() {
-    Meteor.call('jobs.default.fetchLog', { jobId: this.id() }, (error, result) => {
+  fetchLog(options = {}) {
+    const { limit, all } = options
+    Meteor.call('jobs.default.fetchLog', { jobId: this.id(), skip: this.log().length, limit }, (error, result) => {
       if (error) return console.log(error)
 
-      const delta = result.log.length - this.log().length
+      const delta = result.log.length
       console.log(`loaded ${delta} new logs`)
-      this.log(result.log)
-      this.loaded(true)
+      result.log.forEach(entry => this.log().push(entry))
+
+      if (all && delta) {
+        this.fetchLog({ limit, all })
+      } else {
+        this.loaded(true)
+      }
     })
   },
   onRendered() {
-    this.fetchLog()
+    this.fetchLog({ all: true })
   },
   autorun() {
     reactiveInterval(this.interval())
-    if (this.autoReload()) this.fetchLog()
+    if (this.autoReload())
+      Tracker.nonreactive(() => this.fetchLog())
   }
 })
 
