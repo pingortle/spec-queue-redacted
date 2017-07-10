@@ -11,8 +11,7 @@ Meteor.methods({
     const jobId = example.jobId
     const job = DefaultJobQueue.getJob(jobId)
 
-    job.rerun()
-
+    job.rerun({ wait: 5 * 1000 })
     return Examples.remove({ jobId })
   }
 })
