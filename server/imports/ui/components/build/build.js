@@ -7,6 +7,7 @@ import './build.less'
 Template.build.viewmodel({
   jobsLoaded: false,
   examplesLoaded: false,
+  showAllExamples: false,
   loaded() {
     return Meteor.BuildSubscriber.ready()
   },
@@ -15,7 +16,8 @@ Template.build.viewmodel({
   },
   examples(selector = {}) {
     const buildId = this.buildId()
-    return Examples.find(_.extend({ buildId }, selector))
+    const options = this.showAllExamples() ? {} : { limit: 5 }
+    return Examples.find(_.extend({ buildId }, selector), options)
   },
   examplesWithStatus(status) {
     return this.examples({ status })
