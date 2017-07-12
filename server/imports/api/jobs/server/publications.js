@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor'
+import { check } from 'meteor/check'
 import { DefaultJobQueue } from '../jobs.js'
 
 const defaultOptions = { fields: { log: 0 } }
@@ -12,6 +13,8 @@ Meteor.publish('jobs.default.in', function (ids) {
 })
 
 Meteor.publish('jobs.default.forBuild', function ({ buildId }) {
+  check(buildId, String)
+
   return DefaultJobQueue.find({ "data.buildId": buildId, status: 'running' }, defaultOptions)
 })
 
