@@ -75,11 +75,15 @@ Template.build.viewmodel({
   },
   autorun: [
     function () {
+      if (!this.buildId()) return;
+
       Meteor.BuildSubscriber.subscribe('jobs.default.forBuild', { buildId: this.buildId() }, () => {
         this.jobsLoaded(true)
       })
     },
     function () {
+      if (!this.buildId()) return;
+
       Meteor.BuildSubscriber.subscribe('examples.withDetails', { buildId: this.buildId(), status: 'failed' }, () => {
         this.examplesLoaded(true)
       })
